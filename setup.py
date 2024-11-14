@@ -1,0 +1,35 @@
+from setuptools import setup
+
+setup(
+    name="terasim_cosim",
+    version="2024.10.18",
+    author="Zhijie Qiao, Haowei Sun, Haojie Zhu",
+    author_email="zhijieq@umich.edu, haoweis@umich.edu, zhuhj@umich.edu",
+    packages=[
+        "terasim_cosim",
+        "terasim_cosim.redis_client_wrapper",
+        "terasim_cosim.redis_msgs",
+        "terasim_cosim.terasim_plugin",
+        "terasim_cosim.terasim_plugin.utils",
+    ],
+    scripts=[],
+    url="https://github.com/michigan-traffic-lab/TeraSim-Cosim",
+    license="MIT",
+    description="SUMO co-simulation with other physics simulator",
+    install_requires=[
+        "numpy==1.26.4",
+        "bidict",
+        "attrs",
+        "addict",
+        "eclipse-sumo",
+        "traci",
+        "libsumo",
+        "sumolib",
+        "redis",
+        "lxml",
+        "requests",
+        "loguru",
+        "pydantic",
+        "pyproj",
+    ],
+)
