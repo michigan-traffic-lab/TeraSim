@@ -4,23 +4,16 @@ from terasim.logger.infoextractor import InfoExtractor
 from terasim_nde_nade.vehicle.nde_vehicle_factory import NDEVehicleFactory
 from envs.safetest_nade_with_av_cosim import SafeTestNADEWithAVCosim
 from pathlib import Path
-from distutils.util import strtobool
 import argparse
 
 from terasim_cosim.terasim_plugin.terasim_cosim_plugin import TeraSimCoSimPlugin
 from terasim_cosim.terasim_plugin.terasim_tls_plugin import TeraSimTLSPlugin
 
-# Function to parse command-line boolean values
-def parse_bool(value):
-    return bool(strtobool(value))
+from examples.terasim_interface import user_step
 
 parser = argparse.ArgumentParser(description="Run simulation.")
-parser.add_argument("--cav", type=parse_bool, help="sumo controlled cav", default=False)
-parser.add_argument("--tls", type=parse_bool, help="sumo controlled traffic light", default=True)
 parser.add_argument("--dir", type=str, help="output directory", default="output")
-parser.add_argument(
-    "--name", type=str, help="experiment name", default="test"
-)
+parser.add_argument("--name", type=str, help="experiment name", default="test")
 parser.add_argument("--nth", type=str, help="the nth epoch", default="0_0")
 parser.add_argument(
     "--aggregateddir", type=str, help="aggregated directory", default="aggregated"
@@ -50,33 +43,34 @@ logger.add(
 env = SafeTestNADEWithAVCosim(
     vehicle_factory=NDEVehicleFactory(),
     info_extractor=InfoExtractor,
+    user_step=user_step,
     log_flag=True,
     log_dir=base_dir,
-    warmup_time_lb=900,
-    warmup_time_ub=1200,
-    run_time=1200,
+    warmup_time_lb=0,
+    warmup_time_ub=100,
+    run_time=3600,
 )
+
 dir_path = Path(__file__).parent
 sim = Simulator(
-    sumo_net_file_path=dir_path / "maps" / "Mcity_safetest" / "mcity.net.xml",
-    sumo_config_file_path=dir_path / "maps" / "Mcity_safetest" / "mcity.sumocfg",
+    sumo_net_file_path=dir_path / "maps" / "mcity.net.xml",
+    sumo_config_file_path=dir_path / "maps" / "mcity.sumocfg",
     num_tries=10,
     gui_flag=True,
     realtime_flag=True,
-    output_path=base_dir,
-    sumo_output_file_types=["fcd_all", "collision", "tripinfo"],
+    output_path=None,
     additional_sumo_args=["--start", "--quit-on-end"],
 )
 
 sim.add_plugin(
     TeraSimCoSimPlugin(
-        control_cav=args.cav,
+        control_cav=True,
     )
 )
 
 sim.add_plugin(
     TeraSimTLSPlugin(
-        control_tls=args.tls,
+        control_tls=True,
     )
 )
 

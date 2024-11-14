@@ -8,8 +8,8 @@ from terasim_cosim.constants import *
 from terasim_cosim.redis_client_wrapper import create_redis_client
 from terasim_cosim.redis_msgs import Vehicle, VehicleDict
 
-from carla_utils.actor import *
-from carla_utils.geometry import *
+from utils.actor import *
+from utils.geometry import *
 
 
 class CarlaCosimPlugin(object):
