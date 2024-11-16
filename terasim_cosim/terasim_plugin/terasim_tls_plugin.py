@@ -2,6 +2,7 @@ import time
 
 from terasim.overlay import traci
 from terasim.simulator import Simulator
+
 from terasim_cosim.constants import *
 from terasim_cosim.redis_client_wrapper import create_redis_client
 from terasim_cosim.redis_msgs import SUMOSignal, SUMOSignalDict
@@ -9,38 +10,33 @@ from terasim_cosim.redis_msgs import SUMOSignal, SUMOSignalDict
 
 class TeraSimTLSPlugin:
 
-    def __init__(
-        self,
-        # If True, TeraSim controls the TLS. If False, CoSim controls the TLS.
-        control_tls=True,
-        # Nodes that TeraSim controls (active only if control_tls=True)
-        master_tls_nodes=[
-            "NODE_11",
-            "NODE_12",
-            "NODE_17",
-            "NODE_18",
-            "NODE_23",
-            "NODE_24",
-        ],
-        # Nodes that CoSim controls (active only if control_tls=False)
-        slave_tls_nodes=[
-            "NODE_11",
-            "NODE_12",
-            "NODE_17",
-            "NODE_18",
-            "NODE_23",
-            "NODE_24",
-        ],
-    ):
+    def __init__(self, remote_flag=False, control_tls=True):
+        self.remote_flag = remote_flag
         self.control_tls = control_tls
-        self.master_tls_nodes = master_tls_nodes
-        self.slave_tls_nodes = slave_tls_nodes
+
+        assert self.remote_flag == False, "Please disable remote_flag for testing"
 
     def on_start(self, simulator: Simulator, ctx):
         key_value_config = {
             COSIM_TLS_INFO: SUMOSignalDict,
         }
-        self.redis_client = create_redis_client(key_value_config=key_value_config)
+
+        if self.control_tls:
+            self.redis_client = create_redis_client(
+                key_value_config=key_value_config,
+                remote_flag=self.remote_flag,
+                pub_channels=[COSIM_TLS_INFO],
+                sub_channels=[],
+                latency_src_channels=[],
+            )
+        else:
+            self.redis_client = create_redis_client(
+                key_value_config=key_value_config,
+                remote_flag=self.remote_flag,
+                pub_channels=[],
+                sub_channels=[COSIM_TLS_INFO],
+                latency_src_channels=[],
+            )
 
     def on_step(self, simulator: Simulator, ctx):
         if self.control_tls:
@@ -75,10 +71,9 @@ class TeraSimTLSPlugin:
         cosim_tls_info.av_next_dist = distance
 
         for tls_id in tls_info:
-            if tls_id in self.master_tls_nodes:
-                signal = SUMOSignal()
-                signal.tls = tls_info[tls_id]
-                cosim_tls_info.data[tls_id] = signal
+            signal = SUMOSignal()
+            signal.tls = tls_info[tls_id]
+            cosim_tls_info.data[tls_id] = signal
 
         self.redis_client.set(COSIM_TLS_INFO, cosim_tls_info)
 
@@ -87,10 +82,9 @@ class TeraSimTLSPlugin:
         if cosim_controlled_tls_info:
             data = cosim_controlled_tls_info.data
             for signal_id in data:
-                if signal_id in self.slave_tls_nodes:
-                    traci.trafficlight.setRedYellowGreenState(
-                        signal_id, data[signal_id].tls
-                    )
+                traci.trafficlight.setRedYellowGreenState(
+                    signal_id, data[signal_id].tls
+                )
 
     def get_tls_id_list(self):
         return traci.trafficlight.getIDList()

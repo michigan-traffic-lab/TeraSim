@@ -16,7 +16,7 @@ class CarlaCosimPlugin(object):
     def __init__(
         self,
         cosim_controlled_vehicle_keys=["terasim_cosim_vehicle_info"],
-        control_cav=False,
+        control_cav=True,
     ):
         self.client = carla.Client("127.0.0.1", 2000)
         self.client.set_timeout(2.0)
@@ -29,7 +29,7 @@ class CarlaCosimPlugin(object):
         self.vehicle_blueprints = create_vehicle_blueprint(self.world)
         self.pedestrian_blueprints = create_pedestrian_blueprint(self.world)
 
-        height_path = "/home/zhijie/terasim/TeraSim-Cosim/python_ws/terasim_cosim/carla_cosim/utils/heights_smoothed.json"
+        height_path = "utils/heights_smoothed.json"
         self.heights = extract_data_from_json_file(height_path)
 
         key_value_config = {

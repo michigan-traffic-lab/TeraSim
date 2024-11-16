@@ -8,5 +8,7 @@ CAV_COSIM_VEHICLE_INFO = "cav_cosim_vehicle_info"
 TERASIM_COSIM_VEHICLE_INFO = "terasim_cosim_vehicle_info"
 COSIM_TLS_INFO = "cosim_tls_info"
 
+CAV_COSIM_VEHICLE_CONTROL = "cav_cosim_vehicle_control"
+
 UPDATE_RATE_SET = 20
 UPDATE_RATE_GET = 50

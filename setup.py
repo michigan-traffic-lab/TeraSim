@@ -17,5 +17,6 @@ setup(
     license="MIT",
     description="SUMO co-simulation with other physics simulator",
     install_requires=[
+        "pygame==2.6.1",
     ],
 )
