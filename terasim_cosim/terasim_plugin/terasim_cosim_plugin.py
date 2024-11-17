@@ -16,12 +16,12 @@ class TeraSimCosimPlugin:
         self,
         remote_flag=False,
         control_cav=False,
-        CAVKeepRoute=1,
+        keepRoute=2,
         CAVSpeedOverride=True,
     ):
         self.remote_flag = remote_flag
         self.control_cav = control_cav
-        self.CAVKeepRoute = CAVKeepRoute
+        self.keepRoute = keepRoute
         self.CAVSpeedOverride = CAVSpeedOverride
 
         assert self.remote_flag == False, "Please disable remote_flag for testing"
@@ -80,13 +80,15 @@ class TeraSimCosimPlugin:
         if cav_cosim_vehicle_info:
             cav_info = cav_cosim_vehicle_info.data["CAV"]
 
-            x, y = utm_to_sumo_coordinate([cav_info.x, cav_info.y])
-            x, y = center_coordinate_to_front_coordinate(x, y, orientation, length)
-
-            orientation = orientation_to_sumo_heading(cav_info.orientation)
-
             length = cav_info.length
             speed_long = cav_info.speed_long
+
+            orientation = cav_info.orientation
+
+            x, y = utm_to_sumo_coordinate(cav_info.x, cav_info.y)
+            x, y = center_coordinate_to_front_coordinate(x, y, orientation, length)
+
+            orientation = orientation_to_sumo_heading(orientation)
 
             if "CAV" in self.simulator.get_vehID_list():
                 traci.vehicle.moveToXY(
@@ -96,7 +98,7 @@ class TeraSimCosimPlugin:
                     x,
                     y,
                     angle=orientation,
-                    CAVKeepRoute=self.CAVKeepRoute,
+                    keepRoute=self.keepRoute,
                 )
                 if self.CAVSpeedOverride:
                     traci.vehicle.setSpeedMode("CAV", 0)
@@ -152,10 +154,10 @@ class TeraSimCosimPlugin:
             orientation = traci.vehicle.getAngle(vehID)
             orientation = sumo_heading_to_orientation(orientation)
 
-            location = traci.vehicle.getPosition3D(vehID)
+            x, y, z = traci.vehicle.getPosition3D(vehID)
 
             x, y = front_coordinate_to_center_coordinate(x, y, orientation, length)
-            x, y = sumo_to_utm_coordinate(location)
+            x, y = sumo_to_utm_coordinate(x, y)
 
             veh_info = Vehicle(
                 x=x,

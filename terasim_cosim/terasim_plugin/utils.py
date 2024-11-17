@@ -9,23 +9,23 @@ from terasim_cosim.redis_msgs import PlannedPath, VehicleControl
 UTM_OFFSET = [-277600 + 102.89, -4686800 + 281.25]
 
 
-def utm_to_sumo_coordinate(utm_coordinate):
+def utm_to_sumo_coordinate(x, y):
     """
     Convert the UTM coordinate to the SUMO coordinate. the input will be a list of [x, y].
     """
     return [
-        utm_coordinate[0] + UTM_OFFSET[0],
-        utm_coordinate[1] + UTM_OFFSET[1],
+        x + UTM_OFFSET[0],
+        y + UTM_OFFSET[1],
     ]
 
 
-def sumo_to_utm_coordinate(sumo_coordinate):
+def sumo_to_utm_coordinate(x, y):
     """
     Convert the SUMO coordinate to the UTM coordinate. the input will be a list of [x, y].
     """
     return [
-        sumo_coordinate[0] - UTM_OFFSET[0],
-        sumo_coordinate[1] - UTM_OFFSET[1],
+        x - UTM_OFFSET[0],
+        y - UTM_OFFSET[1],
     ]
 
 
@@ -104,6 +104,29 @@ def send_user_av_control_wrapper(
     """
     Description: Send the control command to the control AV.
     """
+
+    if brake_cmd < 0.0 or brake_cmd > 1.0:
+        raise ValueError("The brake_cmd should be in the range of [0.0, 1.0].")
+    if throttle_cmd < 0.0 or throttle_cmd > 1.0:
+        raise ValueError("The throttle_cmd should be in the range of [0.0, 1.0].")
+    if steering_cmd < -1.0 or steering_cmd > 1.0:
+        raise ValueError("The steering_cmd should be in the range of [-1.0, 1.0].")
+    if gear_cmd < 0 or gear_cmd > 4:
+        raise ValueError("The gear_cmd should be in the range of [0, 4].")
+    if throttle_cmd > 0.0 and brake_cmd > 0.0:
+        raise ValueError(
+            "The throttle_cmd and brake_cmd cannot be both greater than 0."
+        )
+
+    if gear_cmd == 1:
+        brake_cmd = 0.5
+        throttle_cmd = 0.0
+        steering_cmd = 0.0
+
+    if gear_cmd == 3:
+        brake_cmd = 0.5
+        throttle_cmd = 0.0
+        steering_cmd = 0.0
 
     vehicle_control = VehicleControl()
 

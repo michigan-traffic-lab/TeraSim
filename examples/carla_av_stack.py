@@ -66,8 +66,8 @@ import carla
 
 from carla import ColorConverter as cc
 
-from terasim_cosim.redis_client_wrapper import create_redis_client
 from terasim_cosim.redis_msgs import VehicleControl
+from terasim_cosim.redis_client_wrapper import create_redis_client
 from terasim_cosim.constants import CAV_COSIM_VEHICLE_CONTROL
 
 import argparse
@@ -183,16 +183,6 @@ def get_actor_blueprints(world, filter, generation):
 
 class World(object):
     def __init__(self, carla_world, hud, args):
-        self.redis_client = create_redis_client(
-            key_value_config={
-                CAV_COSIM_VEHICLE_CONTROL: VehicleControl,
-            },
-            remote_flag=False,
-            pub_channels=[],
-            sub_channels=[],
-            latency_src_channels=[],
-        )
-
         self.world = carla_world
         self.sync = args.sync
         self.actor_role_name = args.rolename
@@ -296,12 +286,12 @@ class World(object):
                 random.choice(spawn_points) if spawn_points else carla.Transform()
             )
 
-            # spawn_point = carla.Transform()
+            spawn_point = carla.Transform()
 
-            # spawn_point.location.x = 147.5
-            # spawn_point.location.y = 105.5
-            # spawn_point.location.z = 235.2
-            # spawn_point.rotation.yaw = -84.8
+            spawn_point.location.x = 148.3
+            spawn_point.location.y = 103.0
+            spawn_point.location.z = 270.5
+            spawn_point.rotation.yaw = -86.0
 
             print("Spawning a vehicle at: ", spawn_point)
             self.player = self.world.try_spawn_actor(blueprint, spawn_point)
@@ -404,10 +394,15 @@ class KeyboardControl(object):
         self._ackermann_enabled = False
         self._ackermann_reverse = 1
 
-        self.redis_control = True
-
-        self.redis_client = redis.Redis(host="localhost", port=6379, db=0)
-        print("Carla CAV Stack: Redis server connected")
+        self.redis_client = create_redis_client(
+            key_value_config={
+                CAV_COSIM_VEHICLE_CONTROL: VehicleControl,
+            },
+            remote_flag=False,
+            pub_channels=[],
+            sub_channels=[],
+            latency_src_channels=[],
+        )
 
         if isinstance(world.player, carla.Vehicle):
             self._control = carla.VehicleControl()
@@ -658,6 +653,13 @@ class KeyboardControl(object):
                 cav_cosim_vehicle_control = self.redis_client.get(
                     CAV_COSIM_VEHICLE_CONTROL
                 )
+                if cav_cosim_vehicle_control:
+                    self._control.brake = cav_cosim_vehicle_control.brake_cmd
+                    self._control.throttle = cav_cosim_vehicle_control.throttle_cmd
+                    self._control.steer = cav_cosim_vehicle_control.steering_cmd
+
+                    if cav_cosim_vehicle_control.gear_cmd == 2:
+                        self._control.reverse = True
             except:
                 print(
                     "Autonomous control command not available. Stopping the vehicle..."
@@ -665,11 +667,7 @@ class KeyboardControl(object):
                 self._control.brake = 1.0
                 self._control.throttle = 0.0
                 self._control.steer = 0.0
-
-            if cav_cosim_vehicle_control:
-                self._control.brake = cav_cosim_vehicle_control.brake_cmd
-                self._control.throttle = cav_cosim_vehicle_control.throttle_cmd
-                self._control.steer = cav_cosim_vehicle_control.steering_cmd
+                self._control.reverse = False
 
             world.player.apply_control(self._control)
 
@@ -1429,7 +1427,7 @@ def game_loop(args):
     pygame.init()
     pygame.font.init()
     world = None
-    original_settings = None
+    # original_settings = None
 
     try:
         client = carla.Client(args.host, args.port)
@@ -1437,23 +1435,23 @@ def game_loop(args):
 
         sim_world = client.get_world()
 
-        if args.sync:
-            original_settings = sim_world.get_settings()
-            settings = sim_world.get_settings()
+        # if args.sync:
+        #     original_settings = sim_world.get_settings()
+        #     settings = sim_world.get_settings()
 
-            if not settings.synchronous_mode:
-                settings.synchronous_mode = True
-                settings.fixed_delta_seconds = 0.04
-            sim_world.apply_settings(settings)
+        #     if not settings.synchronous_mode:
+        #         settings.synchronous_mode = True
+        #         settings.fixed_delta_seconds = 0.04
+        #     sim_world.apply_settings(settings)
 
-            traffic_manager = client.get_trafficmanager()
-            traffic_manager.set_synchronous_mode(True)
+        #     traffic_manager = client.get_trafficmanager()
+        #     traffic_manager.set_synchronous_mode(True)
 
-        if args.autopilot and not sim_world.get_settings().synchronous_mode:
-            print(
-                "WARNING: You are currently in asynchronous mode and could "
-                "experience some issues with the traffic simulation"
-            )
+        # if args.autopilot and not sim_world.get_settings().synchronous_mode:
+        #     print(
+        #         "WARNING: You are currently in asynchronous mode and could "
+        #         "experience some issues with the traffic simulation"
+        #     )
 
         display = pygame.display.set_mode(
             (args.width, args.height),
@@ -1484,8 +1482,8 @@ def game_loop(args):
             pygame.display.flip()
 
     finally:
-        if original_settings:
-            sim_world.apply_settings(original_settings)
+        # if original_settings:
+        #     sim_world.apply_settings(original_settings)
 
         if world and world.recording_enabled:
             client.stop_recorder()

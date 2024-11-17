@@ -23,7 +23,7 @@ A key feature of TeraSim is its co-simulation functionality, which enables seaml
 
 #### Dependency Installation
 
-- __Redis__: follow the instructions to install [redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/). It is also recommended that you install [redis commander](https://www.npmjs.com/package/redis-commander/v/0.6.3). a web-based redis visualization tool.
+- __Redis__: follow the instructions to install [redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/). It is recommended that you install [redis commander](https://www.npmjs.com/package/redis-commander/v/0.6.3). a web-based redis visualization tool.
 
 
 - __Anaconda__: download and install [Anaconda](https://www.anaconda.com/download/success).
@@ -56,17 +56,34 @@ sudo chmod +x install.sh
 ```
 
 ## Running the Simulation
-Set up a redis server to store traffic data for co-simulation and leave running it in the background.
+
+#### Set up Redis
+Set up a redis server to store data for co-simulation and leave it running it in the background.
 
 ```
 redis-server
 ```
 
-Navigate to the `example` folder and run `terasim_exapmle.py` with optional arguments. The SUMO window should open, and the simulation will start running. For detailed description of each argument, please refer to the python file. 
+#### Run TeraSim
+
+Navigate to the `example` folder to access the simulation settings. Two options are provided:
+
+1. [Naturalistic Driving Environment (NDE)](https://www.nature.com/articles/s41467-023s-37677-5)
+2. Plain simulation
+
+To run the simulation, execute the command below. Upon execution, a SUMO window should open, and the simulation will begin. For a detailed explanation of each argument, refer to the corresponding python file.
+
+While the simulation is running, users should send autonomous vehicle (AV) control commands to be executed in CARLA. The synchronized AV status will then be sent back to TeraSim. If the user does not run CARLA co-simulation alongisde TeraSim, AV will be controlled by the IDM model. Additional details about these processes will be discussed in the following sections.
 
 ```
+# Navigate to the example directory
 cd examples
-python3 terasim_example.py --gui_flag --realtime_flag
+
+# Running the NDE simulation
+python3 terasim_nde_example.py --gui_flag --realtime_flag
+
+# Running the plain simulation
+python3 terasim_plain_example.py --gui_flag --realtime_flag
 ```
 
 ## Configure the Simulation
@@ -76,28 +93,47 @@ Customizing the simulation requires some understanding of the SUMO environment. 
 
 The simulation can be both **pre-configured** and **post-configured**:
 
-- **Pre-configuration**: To adjust simulation settings, navigate to `examples/maps`. 
-  - You can modify high-level configurations in `mcity_micro.sumocfg`.
-  - To alter predefined vehicle routes and volumes, edit `mcity.route.xml`.
+- **Pre-configuration**:
+  - Modify the high-level sumo setting in `examples/maps/mcity_micro.sumocfg`.
+  - Modify pre-defined vehicle routes and volumes in `examples/maps/mcity.route.xml`.
 
-- **Runtime Configuration**: To make changes during the simulation, such as controlling the vehicle's movements or traffic lights based on real-time feedback:
-  - Open `terasim_interface.py` and implement changes in the `user_step(traci)` function. This function is called and executed with each update of the simulator.
-  - Examples for usage can be found in the `user_step_example(traci)` function, offering a useful starting point for implementing custom real-time actions.
+- **Runtime Configuration**: 
+  - Read traffic data and control the vehicles in `terasim_user_functions.py`. Users should implement their changes in `user_step(traci)` function, which is called and executed with each update of the simulator. Some examples code has been given as a starting point.
 
- __IMPORTANT__: The testing environment is a fine-tuned Naturalist Driving Environment (NDE) designed for autonomous vehicle (AV) testing. For simulation stability, please configure only the AV's behavior through TraCI, while leaving the behavior of background vehicles (BVs) unchanged (BV information can still be accessed). If you choose not to directly control the AV, TeraSim's default IDM model will manage its behavior. If you wish to wish to customize all vehicles, please refer to our [Mcity-2.0-API-for-Joint-Control](https://github.com/michigan-traffic-lab/Mcity-2.0-API-for-Joint-Control/tree/main) repo which provides a generic TeraSim simulator setup.
+ __IMPORTANT__: The NDE simulation is a fine-tuned environment designed for autonomous vehicle (AV) testing. To ensure simulation stability, avoid setting BV's actions using Traci, as this may lead to a simulation crash. BV information can still be accessed without issues.
 
 
 ## Running CARLA Co-Simulation
-Download the [Mcity CARLA Simualtor](google.com). Extract the files and start running a CARLA server in the background.
+Download and extract the [Mcity CARLA Simualtor](google.com). Start a CARLA server in the background.
 
 ```
 ./CarlaUE4.sh
 ```
 
-Run the CARLA co-simulation script. You should now see all TeraSim vehicles synchronized into CARLA.
+#### Running the AV Stack
+
+Run the Autonomous Vehicle stack to spawn an AV capable of both manual and autonomous control.
+
 ```
 cd examples
-python carla_cosim.py
+python3 carla_av_stack.py
+```
+
+#### Manual Control
+1. Ensure the `pygame` window is active by moving the mouse cursor over it.
+2. Use the **arrow keys** to drive the AV manually.
+   - **Press `q`** to toggle reverse mode.
+
+#### Autonomous Control
+1. Modify the `send_av_control` function in the `terasim_user_functions.py` file to define the desired autonomous behavior.
+2. While in manual mode, **press `p`** to switch to autonomous control.
+
+#### Co-simulation
+Run the CARLA co-simulation script to synchronize the AV and BVs.
+
+```
+cd examples
+python3 carla_cosim.py
 ```
 
 ## Troubleshooting
@@ -116,6 +152,12 @@ python carla_cosim.py
     "_Could not create server TCP listening socket *:6379: bind: Address already in use_",
     ```
     that means the redis server is already running, and you can proceed without further action.
+
+## Known Limitation
+1. CARLA server crash: an intiric issue of CARLA. It is occurs, restart CARLA and everything else.
+2. Background vehicle jittering in CARLA: this is due to the low update frequency of TeraSim (10Hz) and the asynchronous step of co-simulation.
+3. Traffic light co-simulation between TeraSim and CARLA is currently not supported. You can still read traffic light status from TeraSim and implement your algorithms without visualization in CARLA.
+4. Bicycle and Pedestrian co-simulation between TeraSim and CARLA is currently not supported. We expect to release this feature in the future.
 
 ## Developer
 

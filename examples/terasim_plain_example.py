@@ -5,6 +5,8 @@ from pathlib import Path
 from terasim.simulator import Simulator
 from terasim.logger.infoextractor import InfoExtractor
 
+from terasim_user_functions import user_step
+
 from terasim_cosim.terasim_plugin.terasim_cosim_plugin import TeraSimCosimPlugin
 
 from envs.env_mcity_joint_control import (
@@ -18,15 +20,6 @@ parser = argparse.ArgumentParser(description="Run simulation.")
 parser.add_argument("--gui_flag", action="store_true", help="display sumo gui")
 parser.add_argument(
     "--realtime_flag", action="store_true", help="run simulation in realtime"
-)
-parser.add_argument(
-    "--warmup_time_lb", type=int, help="warmup time lower bound", default=300
-)
-parser.add_argument(
-    "--warmup_time_ub", type=int, help="warmup time upper bound", default=900
-)
-parser.add_argument(
-    "--run_time", type=int, help="simulation maximum run time", default=3600
 )
 
 args = parser.parse_args()
@@ -45,10 +38,11 @@ if __name__ == "__main__":
     # Create the simulator
     sim = Simulator(
         sumo_net_file_path=maps_path / "mcity.net.xml",
-        sumo_config_file_path=maps_path / "mcity_micro.sumocfg",
+        sumo_config_file_path=maps_path / "mcity.sumocfg",
         num_tries=10,
         gui_flag=True,
         realtime_flag=True,
+        additional_sumo_args=["--start", "--quit-on-end"],
     )
 
     sim.add_plugin(TeraSimCosimPlugin())

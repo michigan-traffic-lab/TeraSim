@@ -80,7 +80,6 @@ class TeraSimRedisClientGeneral:
                 )
 
         self.latency_src_channels = latency_src_channels
-        print("Redis client is initialized!")
 
     def get(self, key: str, mode: str = "local") -> Any:
         """Overwrite the get method of Redis client.

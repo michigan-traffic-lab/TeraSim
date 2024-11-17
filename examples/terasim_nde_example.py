@@ -8,6 +8,7 @@ from envs.safetest_nade_with_av_cosim import SafeTestNADEWithAVCosim
 
 from terasim_cosim.terasim_plugin.terasim_cosim_plugin import TeraSimCosimPlugin
 
+from terasim_user_functions import user_step
 
 parser = argparse.ArgumentParser(description="Run simulation.")
 
@@ -29,6 +30,7 @@ parser.add_argument(
 args = parser.parse_args()
 
 env = SafeTestNADEWithAVCosim(
+    user_step=user_step,
     vehicle_factory=NDEVehicleFactory(),
     info_extractor=InfoExtractor,
     warmup_time_lb=args.warmup_time_lb,
@@ -41,8 +43,8 @@ sim = Simulator(
     sumo_net_file_path=dir_path / "maps" / "mcity.net.xml",
     sumo_config_file_path=dir_path / "maps" / "mcity.sumocfg",
     num_tries=10,
-    gui_flag=args.gui_flag,
-    realtime_flag=args.realtime_flag,
+    gui_flag=True,
+    realtime_flag=True,
     additional_sumo_args=["--start", "--quit-on-end"],
 )
 
