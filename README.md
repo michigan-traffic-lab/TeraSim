@@ -60,6 +60,7 @@ sudo chmod +x install.sh
 #### Run TeraSim
 
 To control an autonomous vehicle (AV) with realistic vehicle dynamics, users can send control commands directly to CARLA within a co-simulation setup. These commands will be executed in CARLA, with the AV synchronized in TeraSim. For further details, refer to the section on Running CARLA Co-Simulation.
+
 TeraSim can also operate independently. If CARLA co-simulation is not utilized, TeraSim will control the AV using the default Intelligent Driver Model (IDM).
 
 To start TeraSim, navigate to the example directory.
@@ -83,7 +84,7 @@ python3 terasim_plain_example.py --gui_flag --realtime_flag
 
 Customizing sumo-based TeraSim requires familiarity with SUMO environment. If you're new to SUMO, refer to [official tutorial](https://sumo.dlr.de/docs/index.html) for guidance.
 
-The simulation supports both **pre-configured** **runtime-configured**:
+The simulation supports both **pre-configured** and **runtime-configured**:
 
 - **Pre-configuration**:
   - Adjust high-level SUMO setting in `examples/maps/mcity_micro.sumocfg`.
