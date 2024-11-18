@@ -57,26 +57,19 @@ sudo chmod +x install.sh
 
 ## Usage
 
-#### Set up Redis
-Set up a Redis server to store data for co-simulation and leave it running in the background.
-
-```
-redis-server
-```
-
 #### Run TeraSim
 
-To focus on autonomous vehicle (AV) control using co-simulation, users should send AV control commands to CARLA, where they will be executed. The AV will also be synchronized in TeraSim. If CARLA co-simulation is not used alongside TeraSim, the AV will default to an IDM (Intelligent Driver Model) for control.
+To focus on autonomous vehicle (AV) control in a co-simulation setup, users should send control commands directly to CARLA, where they will be executed, with the AV synchronized in TeraSim. Please refer to the section of Running CARLA Co-Simulation for more details
+TeraSim can also operate independently. If CARLA co-simulation is not utilized, TeraSim will control the AV using the default Intelligent Driver Model (IDM).
 
-To start TeraSim, use the command below.
+To start TeraSim, navigate to the example directory.
 ```
-# Navigate to the example directory
 cd examples
 ```
 
-Two modes are provided:
+Two modes of TeraSim are provided:
 
-1. Running [Naturalistic Driving Environment (NDE)](https://www.nature.com/articles/s41467-023-37677-5) -based simulation
+1. Running [Naturalistic Driving Environment (NDE)](https://www.nature.com/articles/s41467-023-37677-5)-based simulation
 ```
 python3 terasim_nde_example.py --gui_flag --realtime_flag
 ```
@@ -86,30 +79,35 @@ python3 terasim_nde_example.py --gui_flag --realtime_flag
 python3 terasim_plain_example.py --gui_flag --realtime_flag
 ```
 
-## Configure the Simulation
-Customizing the simulation requires some understanding of the SUMO environment. If you're new to SUMO, you can follow the [official tutorial](https://sumo.dlr.de/docs/index.html) for guidance.
+#### TeraSim Configuration Options
 
-#### Simulation Configuration Options
+Customizing sumo-based TeraSim requires familiarity with SUMO environment. If you're new to SUMO, refer to [official tutorial](https://sumo.dlr.de/docs/index.html) for guidance.
 
-The simulation can be both **pre-configured** and **post-configured**:
+The simulation supports both **pre-configured** **runtime-configured**:
 
 - **Pre-configuration**:
-  - Modify the high-level sumo setting in `examples/maps/mcity_micro.sumocfg`.
-  - Modify pre-defined vehicle routes and volumes in `examples/maps/mcity.route.xml`.
+  - Adjust high-level SUMO setting in `examples/maps/mcity_micro.sumocfg`.
+  - Modify pre-defined vehicle routes and traffic volumes in `examples/maps/mcity.route.xml`.
 
 - **Runtime Configuration**: 
-  - Read traffic data and control the vehicles in `terasim_user_functions.py`. Users should implement their changes in `user_step(traci)` function, which is called and executed with each update of the simulator. Some examples code has been given as a starting point.
+  - Read traffic data and control the vehicles in `terasim_user_functions.py`. Users should implement their changes in `user_step(traci)` function, which is called and executed with each update of the simulator. Sample code is provided to help you get started.
 
- __IMPORTANT__: The NDE simulation is a fine-tuned environment designed for autonomous vehicle (AV) testing. To ensure simulation stability, avoid setting BV's actions using Traci, as this may lead to a simulation crash. BV information can still be accessed without issues.
+ __IMPORTANT__: The NDE simulation is a fine-tuned environment for autonomous vehicle (AV) testing. To ensure stability, avoid using TraCI to control background vehicle (BV) actions, as this may lead to simulation crashes. However, you can safely read background traffic data.
+ 
+#### Running CARLA Co-Simulation
+If Carla co-simulation is used, users should send control commands directly to CARLA, where they will be executed, with the AV synchronized in TeraSim.
 
-
-## Running CARLA Co-Simulation
 Download and extract the [Mcity CARLA Simualtor](google.com). Start a CARLA server in the background.
 
 ```
 ./CarlaUE4.sh
 ```
+#### Set up Redis
+Set up a Redis server to store data for co-simulation and leave it running in the background.
 
+```
+redis-server
+```
 #### Running the AV Stack
 
 Run the Autonomous Vehicle stack to spawn an AV capable of both manual and autonomous control.
