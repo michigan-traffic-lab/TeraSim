@@ -76,16 +76,13 @@ cd examples
 
 Two modes are provided:
 
-1. [Naturalistic Driving Environment (NDE)](https://www.nature.com/articles/s41467-023-37677-5)
-2. Plain simulation
-3. 
-To run these modes, use the following commands:
+1. Running [Naturalistic Driving Environment (NDE)](https://www.nature.com/articles/s41467-023-37677-5) -based simulation
+```
+python3 terasim_nde_example.py --gui_flag --realtime_flag
+```
+2. Running default SUMO simulation
 
 ```
-# Running the NDE simulation
-python3 terasim_nde_example.py --gui_flag --realtime_flag
-
-# Running the plain simulation
 python3 terasim_plain_example.py --gui_flag --realtime_flag
 ```
 
