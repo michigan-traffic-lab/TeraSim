@@ -16,14 +16,14 @@ A key feature of TeraSim is its co-simulation functionality, which enables seaml
 
 #### Requirements
 
-- __Hardware__: the Terasim simulation is not highly demanding in terms of computational power. A system with an 8-core CPU and 8GB of RAM is generally sufficient, and no GPU is required. However, for co-simulation with more resource-intensive platforms like CARLA, a more powerful system is recommended.
+For optimal performance and stability, we recommend installing the system on a dedicated machine rather than a virtual machine.
 
-- __System__: Ubuntu 22.04. To ensure reliable installation and operation, we recommend installing the system on a dedicated machine rather than on a virtual machine.
-
+- __Hardware__: The Terasim simulation is not particularly resource-intensive. A system with an 8-core CPU and 8GB of RAM is typically sufficient, and a GPU is not necessary. However, for co-simulation with more demanding platforms such as CARLA, a more powerful system is advised.
+- __System__: Ubuntu 22.04
 
 #### Dependency Installation
 
-- __Redis__: follow the instructions to install [redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/). It is recommended that you install [redis commander](https://www.npmjs.com/package/redis-commander/v/0.6.3). a web-based redis visualization tool.
+- __Redis__: follow the instructions to install [redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/). It is recommended to install [redis commander](https://www.npmjs.com/package/redis-commander/v/0.6.3) a web-based Redis visualization tool.
 
 
 - __Anaconda__: download and install [Anaconda](https://www.anaconda.com/download/success).
@@ -55,10 +55,10 @@ sudo chmod +x install.sh
 ./install.sh
 ```
 
-## Running the Simulation
+## Usage
 
 #### Set up Redis
-Set up a redis server to store data for co-simulation and leave it running it in the background.
+Set up a Redis server to store data for co-simulation and leave it running in the background.
 
 ```
 redis-server
@@ -66,19 +66,22 @@ redis-server
 
 #### Run TeraSim
 
-Navigate to the `example` folder to access the simulation settings. Two options are provided:
+To focus on autonomous vehicle (AV) control using co-simulation, users should send AV control commands to CARLA, where they will be executed. The AV will also be synchronized in TeraSim. If CARLA co-simulation is not used alongside TeraSim, the AV will default to an IDM (Intelligent Driver Model) for control.
 
-1. [Naturalistic Driving Environment (NDE)](https://www.nature.com/articles/s41467-023s-37677-5)
-2. Plain simulation
-
-To run the simulation, execute the command below. Upon execution, a SUMO window should open, and the simulation will begin. For a detailed explanation of each argument, refer to the corresponding python file.
-
-While the simulation is running, users should send autonomous vehicle (AV) control commands to be executed in CARLA. The synchronized AV status will then be sent back to TeraSim. If the user does not run CARLA co-simulation alongisde TeraSim, AV will be controlled by the IDM model. Additional details about these processes will be discussed in the following sections.
-
+To start TeraSim, use the command below.
 ```
 # Navigate to the example directory
 cd examples
+```
 
+Two modes are provided:
+
+1. [Naturalistic Driving Environment (NDE)](https://www.nature.com/articles/s41467-023-37677-5)
+2. Plain simulation
+3. 
+To run these modes, use the following commands:
+
+```
 # Running the NDE simulation
 python3 terasim_nde_example.py --gui_flag --realtime_flag
 
