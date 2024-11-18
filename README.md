@@ -23,7 +23,7 @@ For optimal performance and stability, we recommend installing the system on a d
 
 #### Dependency Installation
 
-- __Redis__: follow the instructions to install [redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/). It is recommended to install [redis commander](https://www.npmjs.com/package/redis-commander/v/0.6.3) a web-based Redis visualization tool.
+- __Redis__: follow the instructions to install [redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/). It is recommended to install [Redis commander](https://www.npmjs.com/package/redis-commander/v/0.6.3) a web-based Redis visualization tool.
 
 
 - __Anaconda__: download and install [Anaconda](https://www.anaconda.com/download/success).
