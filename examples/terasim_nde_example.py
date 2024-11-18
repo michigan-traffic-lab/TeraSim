@@ -13,10 +13,6 @@ from terasim_user_functions import user_step
 parser = argparse.ArgumentParser(description="Run simulation.")
 
 # Optional arguments
-parser.add_argument("--gui_flag", action="store_true", help="display sumo gui")
-parser.add_argument(
-    "--realtime_flag", action="store_true", help="run simulation in realtime"
-)
 parser.add_argument(
     "--warmup_time_lb", type=int, help="warmup time lower bound", default=300
 )

@@ -1,5 +1,3 @@
-import argparse
-
 from pathlib import Path
 
 from terasim.simulator import Simulator
@@ -13,16 +11,6 @@ from envs.env_mcity_joint_control import (
     TeraSimEnvForUser,
     ExampleVehicleFactory,
 )
-
-parser = argparse.ArgumentParser(description="Run simulation.")
-
-# Optional arguments
-parser.add_argument("--gui_flag", action="store_true", help="display sumo gui")
-parser.add_argument(
-    "--realtime_flag", action="store_true", help="run simulation in realtime"
-)
-
-args = parser.parse_args()
 
 if __name__ == "__main__":
     current_path = Path(__file__).parent

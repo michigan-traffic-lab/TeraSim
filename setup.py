@@ -9,8 +9,7 @@ setup(
         "terasim_cosim",
         "terasim_cosim.redis_client_wrapper",
         "terasim_cosim.redis_msgs",
-        "terasim_cosim.terasim_plugin",
-        "terasim_cosim.terasim_plugin.utils",
+        "terasim_cosim.terasim_plugin"
     ],
     scripts=[],
     url="https://github.com/michigan-traffic-lab/TeraSim-Cosim",

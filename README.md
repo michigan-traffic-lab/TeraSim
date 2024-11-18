@@ -66,6 +66,13 @@ TeraSim can also operate independently. If CARLA co-simulation is not utilized, 
 
 The TeraSim Core is integrated into this repository and will be installed automatically. For more details, please refer to the [TeraSim Core repository](https://github.com/michigan-traffic-lab/TeraSim).
 
+#### Set up Redis
+Set up a Redis server to store data for co-simulation and leave it running in the background.
+
+```
+redis-server
+```
+
 To start TeraSim, navigate to the example directory.
 ```
 cd examples
@@ -75,12 +82,12 @@ TeraSim-Cosimulation offers two modes for controlling background vehicles (BVs):
 
 1. Running [Naturalistic Driving Environment (NDE)](https://www.nature.com/articles/s41467-023-37677-5)-based simulation
 ```
-python3 terasim_nde_example.py --gui_flag --realtime_flag
+python3 terasim_nde_example.py
 ```
 2. Running default SUMO simulation
 
 ```
-python3 terasim_plain_example.py --gui_flag --realtime_flag
+python3 terasim_plain_example.py
 ```
 
 #### TeraSim Configuration Options
@@ -106,25 +113,13 @@ Download and extract the [Mcity CARLA Simualtor](https://drive.google.com/file/d
 ```
 ./CarlaUE4.sh
 ```
-#### Set up Redis
-Set up a Redis server to store data for co-simulation and leave it running in the background.
 
-```
-redis-server
-```
 #### Running the AV Stack
 
 Launch the AV stack to spawn an AV that supports both manual and autonomous control:
 ```
 cd examples
 python3 carla_av_stack.py
-```
-
-#### Running AV sensors (optional)
-For users needing to simulate perception data, we provide a template to generate LiDAR and varying camera images from CARLA and convert them to ROS2 format. To utilize this feature, users must install [ROS2](https://docs.ros.org/en/humble/index.html) and have a basic understanding of its framework. Detailed comments are included in the file to assist with setup and usage. The script can be executed using the following command:
-```
-cd examples
-python3 carla_sensor_ros2.py
 ```
 
 #### Manual Control
@@ -142,6 +137,13 @@ Run the CARLA co-simulation script to synchronize the AV and BVs.
 ```
 cd examples
 python3 carla_cosim.py
+```
+
+#### Running AV sensors (optional)
+For users needing to simulate perception data, we provide a template to generate LiDAR and varying camera images from CARLA and convert them to ROS2 format. To utilize this feature, users must install [ROS2](https://docs.ros.org/en/humble/index.html) and have a basic understanding of its framework. Detailed comments are included in the file to assist with setup and usage. The script can be executed using the following command:
+```
+cd examples
+python3 carla_sensor_ros2.py
 ```
 
 ## Troubleshooting
