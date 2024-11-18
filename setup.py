@@ -16,7 +16,5 @@ setup(
     url="https://github.com/michigan-traffic-lab/TeraSim-Cosim",
     license="MIT",
     description="SUMO co-simulation with other physics simulator",
-    install_requires=[
-        "pygame==2.6.1",
-    ],
+    install_requires=["pygame==2.6.1", "opencv-python==4.10.0.84"],
 )

@@ -100,7 +100,7 @@ The TeraSim (SUMO) supports both **pre-configured** and **runtime-configured**:
 #### Running CARLA
 If Carla co-simulation is used, users should send control commands directly to CARLA, where they will be executed, with the AV synchronized in TeraSim.
 
-Download and extract the [Mcity CARLA Simualtor](google.com). Start a CARLA server in the background.
+Download and extract the [Mcity CARLA Simualtor](https://drive.google.com/file/d/1MO1el1uwyudPVDsWDv531VS_7Pz98ovv/view?usp=sharing). Start a CARLA server in the background.
 
 ```
 ./CarlaUE4.sh
@@ -117,6 +117,13 @@ Launch the AV stack to spawn an AV that supports both manual and autonomous cont
 ```
 cd examples
 python3 carla_av_stack.py
+```
+
+#### Running AV sensors (optional)
+For users needing to simulate perception data, we provide a template to generate LiDAR and varying camera images from CARLA and convert them to ROS2 format. To utilize this feature, users must install [ROS2](https://docs.ros.org/en/humble/index.html) and have a basic understanding of its framework. Detailed comments are included in the file to assist with setup and usage. The script can be executed using the following command:
+```
+cd examples
+python3 carla_sensor_ros2.py
 ```
 
 #### Manual Control
