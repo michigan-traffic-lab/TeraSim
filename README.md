@@ -84,7 +84,7 @@ python3 terasim_plain_example.py --gui_flag --realtime_flag
 
 Customizing sumo-based TeraSim requires familiarity with SUMO environment. If you're new to SUMO, refer to [official tutorial](https://sumo.dlr.de/docs/index.html) for guidance.
 
-The simulation supports both **pre-configured** and **runtime-configured**:
+The TeraSim (SUMO) supports both **pre-configured** and **runtime-configured**:
 
 - **Pre-configuration**:
   - Adjust high-level SUMO setting in `examples/maps/mcity_micro.sumocfg`.
@@ -93,9 +93,9 @@ The simulation supports both **pre-configured** and **runtime-configured**:
 - **Runtime Configuration**: 
   - Read traffic data and control the vehicles in `terasim_user_functions.py`. Users should implement their changes in `user_step(traci)` function, which is called and executed with each simulation step. Sample code is provided to help you get started.
 
- __IMPORTANT__: The NDE simulation is a fine-tuned environment for autonomous vehicle (AV) testing. To ensure stability, avoid using TraCI to control background vehicle (BV) actions, as this may lead to simulation crashes. However, you can safely read background traffic data.
+ __IMPORTANT__: The NDE simulation is a fine-tuned environment for autonomous vehicle (AV) testing. To ensure stability, avoid using TraCI to control BVs actions, as this may lead to simulation crashes. However, you can safely read background traffic data.
  
-#### Running CARLA Co-Simulation
+#### Running CARLA
 If Carla co-simulation is used, users should send control commands directly to CARLA, where they will be executed, with the AV synchronized in TeraSim.
 
 Download and extract the [Mcity CARLA Simualtor](google.com). Start a CARLA server in the background.
@@ -126,7 +126,7 @@ python3 carla_av_stack.py
 1. Modify the `send_av_control` function in the `terasim_user_functions.py` file to define the desired autonomous behavior.
 2. While in manual mode, **press `p`** to switch to autonomous control.
 
-#### Co-simulation
+#### Ruuning Co-simulation
 Run the CARLA co-simulation script to synchronize the AV and BVs.
 
 ```
@@ -149,13 +149,13 @@ python3 carla_cosim.py
     ``` 
     "_Could not create server TCP listening socket *:6379: bind: Address already in use_",
     ```
-    that means the redis server is already running, and you can proceed without further action.
+    That means the Redis server is already running, and you can proceed without further action.
 
 ## Known Limitation
-1. CARLA server crash: an intiric issue of CARLA. It is occurs, restart CARLA and everything else.
-2. Background vehicle jittering in CARLA: this is due to the low update frequency of TeraSim (10Hz) and the asynchronous step of co-simulation.
-3. Traffic light co-simulation between TeraSim and CARLA is currently not supported. You can still read traffic light status from TeraSim and implement your algorithms without visualization in CARLA.
-4. Bicycle and Pedestrian co-simulation between TeraSim and CARLA is currently not supported. We expect to release this feature in the future.
+1. CARLA Server Crashes: This is an inherent issue within CARLA. If it happens, simply restart CARLA along with any related processes.
+2. Vehicle Jittering in CARLA: This occurs due to TeraSim's low update frequency (10Hz) combined with the asynchronous stepping in co-simulation.
+3. Traffic Light Co-Simulation: Currently, traffic light synchronization between TeraSim and CARLA is not supported. However, you can still access traffic light status from TeraSim and utilize it in your algorithms without visual representation in CARLA.
+4. Bicycle and Pedestrian Co-Simulation: Support for co-simulating bicycles and pedestrians between TeraSim and CARLA is not available at the moment. We plan to introduce this feature in the future.
 
 ## Developer
 
@@ -173,7 +173,6 @@ Distributed under the MIT License.
 
 ## Contact
 
-- Sean Shen - shengyin@umich.edu - Michigan Traffic Lab
 - Henry Liu - henryliu@umich.edu - Michigan Traffic Lab
 
 
