@@ -63,6 +63,8 @@ To control an autonomous vehicle (AV) with realistic vehicle dynamics, users can
 
 TeraSim can also operate independently. If CARLA co-simulation is not utilized, TeraSim will control the AV using the default Intelligent Driver Model (IDM).
 
+The TeraSim Core is integrated into this repository and will be installed automatically. For more details, please refer to the [TeraSim Core repository]https://github.com/michigan-traffic-lab/TeraSim).
+
 To start TeraSim, navigate to the example directory.
 ```
 cd examples
