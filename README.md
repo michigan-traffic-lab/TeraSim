@@ -68,7 +68,7 @@ To start TeraSim, navigate to the example directory.
 cd examples
 ```
 
-Two modes of TeraSim are provided:
+TeraSim offers two modes for controlling background vehicles (BVs):
 
 1. Running [Naturalistic Driving Environment (NDE)](https://www.nature.com/articles/s41467-023-37677-5)-based simulation
 ```
@@ -91,7 +91,7 @@ The simulation supports both **pre-configured** and **runtime-configured**:
   - Modify pre-defined vehicle routes and traffic volumes in `examples/maps/mcity.route.xml`.
 
 - **Runtime Configuration**: 
-  - Read traffic data and control the vehicles in `terasim_user_functions.py`. Users should implement their changes in `user_step(traci)` function, which is called and executed with each update of the simulator. Sample code is provided to help you get started.
+  - Read traffic data and control the vehicles in `terasim_user_functions.py`. Users should implement their changes in `user_step(traci)` function, which is called and executed with each simulation step. Sample code is provided to help you get started.
 
  __IMPORTANT__: The NDE simulation is a fine-tuned environment for autonomous vehicle (AV) testing. To ensure stability, avoid using TraCI to control background vehicle (BV) actions, as this may lead to simulation crashes. However, you can safely read background traffic data.
  
@@ -111,8 +111,7 @@ redis-server
 ```
 #### Running the AV Stack
 
-Run the Autonomous Vehicle stack to spawn an AV capable of both manual and autonomous control.
-
+Launch the AV stack to spawn an AV that supports both manual and autonomous control:
 ```
 cd examples
 python3 carla_av_stack.py
