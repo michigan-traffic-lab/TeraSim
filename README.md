@@ -70,7 +70,7 @@ To start TeraSim, navigate to the example directory.
 cd examples
 ```
 
-TeraSim offers two modes for controlling background vehicles (BVs):
+TeraSim-Cosimulation offers two modes for controlling background vehicles (BVs):
 
 1. Running [Naturalistic Driving Environment (NDE)](https://www.nature.com/articles/s41467-023-37677-5)-based simulation
 ```
