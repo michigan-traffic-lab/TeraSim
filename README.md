@@ -11,7 +11,6 @@
 
 A key feature of TeraSim is its co-simulation functionality, which enables seamless integration with open-source industry-standard tools such as [CARLA](https://carla.org/) and [Autoware](https://autoware.org/), facilitating comprehensive testing that combines TeraSim's advanced traffic modeling with high-fidelity sensor simulation and accurate vehicle dynamics.
 
-![Demo](Fig/cosim.mp4)
 
 ## Installation
 
@@ -58,6 +57,12 @@ sudo chmod +x install.sh
 
 ## Usage
 
+#### Set up Redis
+Set up a Redis server as an in-memory data structure store and leave it running in the background.
+
+```
+redis-server
+```
 #### Run TeraSim
 
 To control an autonomous vehicle (AV) with realistic vehicle dynamics, users can send control commands directly to CARLA within a co-simulation setup. These commands will be executed in CARLA, with the AV synchronized in TeraSim. For further details, refer to the section on Running CARLA Co-Simulation.
@@ -65,13 +70,6 @@ To control an autonomous vehicle (AV) with realistic vehicle dynamics, users can
 TeraSim can also operate independently. If CARLA co-simulation is not utilized, TeraSim will control the AV using the default Intelligent Driver Model (IDM).
 
 The TeraSim Core is integrated into this repository and will be installed automatically. For more details, please refer to the [TeraSim Core repository](https://github.com/michigan-traffic-lab/TeraSim).
-
-#### Set up Redis
-Set up a Redis server to store data for co-simulation and leave it running in the background.
-
-```
-redis-server
-```
 
 To start TeraSim, navigate to the example directory.
 ```
