@@ -106,7 +106,7 @@ The TeraSim (SUMO) supports both **pre-configured** and **runtime-configured**:
 #### Running CARLA
 If Carla co-simulation is used, users should send control commands directly to CARLA, where they will be executed, with the AV synchronized in TeraSim.
 
-Download and extract the [Mcity CARLA Simualtor](https://drive.google.com/file/d/1MO1el1uwyudPVDsWDv531VS_7Pz98ovv/view?usp=sharing). Start a CARLA server in the background.
+Download and extract the [Mcity CARLA Simualtor](https://github.com/mcity/mcity-digital-twin). Start a CARLA server in the background.
 
 ```
 ./CarlaUE4.sh
