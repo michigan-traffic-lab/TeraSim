@@ -139,14 +139,14 @@ def send_user_av_control_wrapper(
 
     # Configure redis key-and data type
     redis_client = create_redis_client(
-        key_value_config={CAV_COSIM_VEHICLE_CONTROL: VehicleControl},
+        key_value_config={VEHICLE_CONTROL: VehicleControl},
         remote_flag=remote_flag,
-        pub_channels=[CAV_COSIM_VEHICLE_CONTROL],
+        pub_channels=[VEHICLE_CONTROL],
         sub_channels=[],
         latency_src_channels=[],
     )
 
-    redis_client.set(CAV_COSIM_VEHICLE_CONTROL, vehicle_control)
+    redis_client.set(VEHICLE_CONTROL, vehicle_control)
 
 
 # def send_user_av_planning_wrapper(

@@ -68,7 +68,7 @@ from carla import ColorConverter as cc
 
 from terasim_cosim.redis_msgs import VehicleControl
 from terasim_cosim.redis_client_wrapper import create_redis_client
-from terasim_cosim.constants import CAV_COSIM_VEHICLE_CONTROL
+from terasim_cosim.constants import VEHICLE_CONTROL
 
 import argparse
 import collections
@@ -396,7 +396,7 @@ class KeyboardControl(object):
 
         self.redis_client = create_redis_client(
             key_value_config={
-                CAV_COSIM_VEHICLE_CONTROL: VehicleControl,
+                VEHICLE_CONTROL: VehicleControl,
             },
             remote_flag=False,
             pub_channels=[],
@@ -650,15 +650,13 @@ class KeyboardControl(object):
                 world.player.apply_control(self._control)
         else:
             try:
-                cav_cosim_vehicle_control = self.redis_client.get(
-                    CAV_COSIM_VEHICLE_CONTROL
-                )
-                if cav_cosim_vehicle_control:
-                    self._control.brake = cav_cosim_vehicle_control.brake_cmd
-                    self._control.throttle = cav_cosim_vehicle_control.throttle_cmd
-                    self._control.steer = cav_cosim_vehicle_control.steering_cmd
+                vehicle_control = self.redis_client.get(VEHICLE_CONTROL)
+                if vehicle_control:
+                    self._control.brake = vehicle_control.brake_cmd
+                    self._control.throttle = vehicle_control.throttle_cmd
+                    self._control.steer = vehicle_control.steering_cmd
 
-                    if cav_cosim_vehicle_control.gear_cmd == 2:
+                    if vehicle_control.gear_cmd == 2:
                         self._control.reverse = True
             except:
                 print(

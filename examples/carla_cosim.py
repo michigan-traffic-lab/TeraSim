@@ -17,7 +17,7 @@ class CarlaCosimPlugin(object):
     def __init__(
         self,
         cosim_controlled_vehicle_keys=["terasim_cosim_vehicle_info"],
-        control_cav=True,
+        control_cav=False,
     ):
         self.client = carla.Client("127.0.0.1", 2000)
         self.client.set_timeout(2.0)
