@@ -11,7 +11,6 @@
 
 A key feature of TeraSim is its co-simulation functionality, which enables seamless integration with open-source industry-standard tools such as [CARLA](https://carla.org/) and [Autoware](https://autoware.org/), facilitating comprehensive testing that combines TeraSim's advanced traffic modeling with high-fidelity sensor simulation and accurate vehicle dynamics.
 
-![Demo](Fig/cosim.mp4)
 
 ## Installation
 
@@ -58,6 +57,12 @@ sudo chmod +x install.sh
 
 ## Usage
 
+#### Set up Redis
+Set up a Redis server as an in-memory data structure store and leave it running in the background.
+
+```
+redis-server
+```
 #### Run TeraSim
 
 To control an autonomous vehicle (AV) with realistic vehicle dynamics, users can send control commands directly to CARLA within a co-simulation setup. These commands will be executed in CARLA, with the AV synchronized in TeraSim. For further details, refer to the section on Running CARLA Co-Simulation.
@@ -66,13 +71,6 @@ TeraSim can also operate independently. If CARLA co-simulation is not utilized, 
 
 The TeraSim Core is integrated into this repository and will be installed automatically. For more details, please refer to the [TeraSim Core repository](https://github.com/michigan-traffic-lab/TeraSim).
 
-#### Set up Redis
-Set up a Redis server to store data for co-simulation and leave it running in the background.
-
-```
-redis-server
-```
-
 To start TeraSim, navigate to the example directory.
 ```
 cd examples
@@ -80,14 +78,14 @@ cd examples
 
 TeraSim-Cosimulation offers two modes for controlling background vehicles (BVs):
 
-1. Running [Naturalistic Driving Environment (NDE)](https://www.nature.com/articles/s41467-023-37677-5)-based simulation
+1. Run [Naturalistic Driving Environment (NDE)](https://www.nature.com/articles/s41467-023-37677-5)-based simulation
 ```
 python3 terasim_nde_example.py
 ```
-2. Running default SUMO simulation
+2. Run default SUMO simulation
 
 ```
-python3 terasim_plain_example.py
+python3 terasim_default_sumo_example.py
 ```
 
 #### TeraSim Configuration Options
@@ -105,16 +103,16 @@ The TeraSim (SUMO) supports both **pre-configured** and **runtime-configured**:
 
  __IMPORTANT__: The NDE simulation is a fine-tuned environment for autonomous vehicle (AV) testing. To ensure stability, avoid using TraCI to control BVs actions, as this may lead to simulation crashes. However, you can safely read background traffic data.
  
-#### Running CARLA
+#### Run CARLA
 If Carla co-simulation is used, users should send control commands directly to CARLA, where they will be executed, with the AV synchronized in TeraSim.
 
-Download and extract the [Mcity CARLA Simualtor](https://drive.google.com/file/d/1MO1el1uwyudPVDsWDv531VS_7Pz98ovv/view?usp=sharing). Start a CARLA server in the background.
+Download and extract the [Mcity CARLA Simualtor](https://github.com/mcity/mcity-digital-twin). Start a CARLA server in the background.
 
 ```
 ./CarlaUE4.sh
 ```
 
-#### Running the AV Stack
+#### Run the AV Stack
 
 Launch the AV stack to spawn an AV that supports both manual and autonomous control:
 ```
@@ -139,7 +137,7 @@ cd examples
 python3 carla_cosim.py
 ```
 
-#### Running AV sensors (optional)
+#### Run AV sensors (optional)
 For users needing to simulate perception data, we provide a template to generate LiDAR and varying camera images from CARLA and convert them to ROS2 format. To utilize this feature, users must install [ROS2](https://docs.ros.org/en/humble/index.html) and have a basic understanding of its framework. Detailed comments are included in the file to assist with setup and usage. The script can be executed using the following command:
 ```
 cd examples
