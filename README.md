@@ -1,6 +1,6 @@
 <!-- PROJECT LOGO -->
 <p align="center">
-  <h2 align="center">TeraSim-Cosimulation</h2>
+  <h2 align="center">TeraSim</h2>
   <p align="center">
   </p>
 </p>
@@ -57,13 +57,13 @@ sudo chmod +x install.sh
 
 ## Usage
 
-#### Set up Redis
+### Set up Redis
 Set up a Redis server as an in-memory data structure store and leave it running in the background.
 
 ```
 redis-server
 ```
-#### Run TeraSim
+### Run TeraSim
 
 To control an autonomous vehicle (AV) with realistic vehicle dynamics, users can send control commands directly to CARLA within a co-simulation setup. These commands will be executed in CARLA, with the AV synchronized in TeraSim. For further details, refer to the section on Running CARLA Co-Simulation.
 
@@ -103,7 +103,7 @@ The TeraSim (SUMO) supports both **pre-configured** and **runtime-configured**:
 
  __IMPORTANT__: The NDE simulation is a fine-tuned environment for autonomous vehicle (AV) testing. To ensure stability, avoid using TraCI to control BVs actions, as this may lead to simulation crashes. However, you can safely read background traffic data.
  
-#### Run CARLA
+### Run CARLA
 If Carla co-simulation is used, users should send control commands directly to CARLA, where they will be executed, with the AV synchronized in TeraSim.
 
 Download and extract the [Mcity CARLA Simualtor](https://github.com/mcity/mcity-digital-twin). Start a CARLA server in the background.
@@ -144,6 +144,9 @@ cd examples
 python3 carla_sensor_ros2.py
 ```
 
+### Run Real AV
+For users looking to run TeraSim with the Mcity Lincoln MKZ fleet equipped with autonomous driving capabilities, visit the [Mcity-2.0-API-for-AV-planning-and-control](https://github.com/michigan-traffic-lab/Mcity-2.0-API-for-AV-motion-planning) repository. Complete all required installations and follow the instructions provided in the "Run AV with TeraSim" section. Although not required, we recommend first developing and testing control algorithms in CARLA before transferring them to the real vehicle.
+
 ## Troubleshooting
 
 - **SUMO GUI not displaying**
@@ -162,7 +165,7 @@ python3 carla_sensor_ros2.py
     That means the Redis server is already running, and you can proceed without further action.
 
 ## Known Limitation
-1. CARLA Server Crashes: This is an inherent issue within CARLA. If it happens, simply restart CARLA along with any related processes.
+1. CARLA Server Crashes: This is an inherent issue within CARLA. If it happens, restart CARLA along with any related processes.
 2. Vehicle Jittering in CARLA: This occurs due to TeraSim's low update frequency (10Hz) combined with the asynchronous stepping in co-simulation.
 3. Traffic Light Co-Simulation: Currently, traffic light synchronization between TeraSim and CARLA is not supported. However, you can still access traffic light status from TeraSim and utilize it in your algorithms without visual representation in CARLA.
 4. Bicycle and Pedestrian Co-Simulation: Support for co-simulating bicycles and pedestrians between TeraSim and CARLA is not available at the moment. We plan to introduce this feature in the future.
