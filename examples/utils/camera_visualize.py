@@ -13,8 +13,6 @@ class ImageSubscriber(Node):
         # Subscribing to three different topics
         self.my_subscriptions = []  # Renamed to avoid conflict
         self.window_names = [
-            "/camera/segmentation_visualization/compressed",
-            "/camera/depth_visualization/compressed",
             "/camera/image_color/compressed",
         ]
 
