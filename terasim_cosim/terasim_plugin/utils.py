@@ -174,24 +174,24 @@ def send_user_av_planning_wrapper(
         y_list_center_utm.append(y)
         orientation_list_nef.append(orientation)
 
-    planned_path = PlannedPath()
+    vehicle_planning = PlannedPath()
 
-    planned_path.header.timestamp = time.time()
-    planned_path.header.information = user_msg
-    planned_path.time_resolution = 0.1
-    planned_path.go = 1
-    planned_path.x_list = x_list_center_utm
-    planned_path.y_list = y_list_center_utm
-    planned_path.speed_list = speed_list
-    planned_path.orientation_list = orientation_list_nef
+    vehicle_planning.header.timestamp = time.time()
+    vehicle_planning.header.information = user_msg
+    vehicle_planning.time_resolution = 0.1
+    vehicle_planning.go = 1
+    vehicle_planning.x_list = x_list_center_utm
+    vehicle_planning.y_list = y_list_center_utm
+    vehicle_planning.speed_list = speed_list
+    vehicle_planning.orientation_list = orientation_list_nef
 
     # Configure redis key-and data type
     redis_client = create_redis_client(
-        key_value_config={PLANNED_PATH: PlannedPath},
+        key_value_config={VEHICLE_PLANNING: PlannedPath},
         remote_flag=remote_flag,
-        pub_channels=[PLANNED_PATH],
+        pub_channels=[VEHICLE_PLANNING],
         sub_channels=[],
         latency_src_channels=[],
     )
 
-    redis_client.set(PLANNED_PATH, planned_path)
+    redis_client.set(VEHICLE_PLANNING, vehicle_planning)

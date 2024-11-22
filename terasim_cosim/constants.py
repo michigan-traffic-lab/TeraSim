@@ -12,7 +12,7 @@ TERASIM_LATENCY = "terasim_latency"
 
 VEHICLE_CONTROL = "/mcity/vehicle_control"
 VEHICLE_STATE = "/mcity/vehicle_state"
-PLANNED_PATH = "/mcity/planned_path"
+VEHICLE_PLANNING = "/mcity/vehicle_planning"
 
 CAMERA_RGB = "/camera/image_color/compressed"
 CAMERA_SPECTATOR = "/camera/spectator/compressed"
