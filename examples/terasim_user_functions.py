@@ -1,4 +1,7 @@
-from terasim_cosim.terasim_plugin.utils import send_user_av_control_wrapper
+from terasim_cosim.terasim_plugin.utils import (
+    send_user_av_control_wrapper,
+    send_user_av_planning_wrapper,
+)
 
 
 def user_step(traci):
@@ -20,8 +23,9 @@ def user_step(traci):
     tls_info = get_tls_info(traci)
     # print(tls_info)
 
-    # send raw control commands to the AV
+    # send control or planning commands (only one should be active)
     send_av_control(vehicle_info)
+    send_av_planning(vehicle_info)
 
     # IMPORANT
     # update BVs through traci, only use this function for plain terasim simulation
@@ -90,12 +94,12 @@ def update_bv_action(traci, vehicle_info):
 
 def send_av_control(vehicle_info):
     """
-    Description: Send the control commands to control the AV.
+    Description: Send low-level control commands to control the AV.
     """
 
-    brake_cmd = 0.2  # [0.0, 1.0]
+    brake_cmd = 0.2  # [0.0, 1.0]0
     throttle_cmd = 0.0  # [0.0, 1.0]
-    steering_cmd = 0.0  # [-1.0, 1.0]
+    steering_cmd = 0.0  # [-1.0, 1.0] for CARLA, [-2.5pi, 2.5pi] for real AV
 
     # PARK       =1
     # REVERSE    =2
@@ -103,10 +107,37 @@ def send_av_control(vehicle_info):
     # DRIVE      =4
     gear_cmd = 1
 
+    user_msg = "your message"
+
     send_user_av_control_wrapper(
         brake_cmd,
         throttle_cmd,
         steering_cmd,
         gear_cmd,
-        user_msg="your message",
+        user_msg=user_msg,
+    )
+
+
+def send_av_planning(vehicle_info):
+    """
+    Description: Send high-level planning commands to control the AV.
+    All coordinates follow the mcity sumo map.
+
+    For best control performance, the resolution between each waypoint should be 0.04 seconds.
+    Users should send a minimum of 50 waypoints (2 seconds) and a maximum of 125 waypoints (5 seconds).
+    """
+
+    x_list = [0.0] * 20  # [m]
+    y_list = [0.0] * 20  # [m]
+    speed_list = [0.0] * 20  # [m/s]
+    orientation_list = [0.0] * 20  # [degrees]
+
+    user_msg = "your message"
+
+    send_user_av_planning_wrapper(
+        x_list=x_list,
+        y_list=y_list,
+        speed_list=speed_list,
+        orientation_list=orientation_list,
+        user_msg=user_msg,
     )
