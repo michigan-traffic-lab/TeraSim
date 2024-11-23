@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from terasim_cosim.redis_msgs import Header
 
 
-class PlannedPath(BaseModel):
+class VehiclePlanning(BaseModel):
     header: Header = Header()
 
     # Time resolution (seconds)
@@ -11,7 +11,6 @@ class PlannedPath(BaseModel):
 
     go: int = 0  # 0 represents not running while 1 represent running
 
-    # Planned path of the next at lease 2 seconds with the predefined time resolution
     ## List of x coordinate of the vehicle's center in UTM coordinate (meters)
     x_list: list[float] = []
     ## List of y coordinate of the vehicle's center in UTM coordinate (meters)

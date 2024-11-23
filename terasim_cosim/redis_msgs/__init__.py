@@ -3,7 +3,7 @@ from .Header import Header
 from .Metric import Metric
 from .MetricDict import MetricDict
 from .Pedestrian import Pedestrian
-from .PlannedPath import PlannedPath
+from .VehiclePlanning import VehiclePlanning
 from .SUMOSignal import SUMOSignal
 from .SUMOSignalDict import SUMOSignalDict
 from .Vehicle import Vehicle

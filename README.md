@@ -149,7 +149,7 @@ For users looking to run TeraSim with the Mcity Lincoln MKZ fleet equipped with 
 
 1. Control Approach: Users can use the `send_av_control` function as described in the CARLA section. Due to differences in the dynamics model and the sim-to-real gap, a controller that works in CARLA will not be directly applicable to a real autonomous vehicle. With proper tuning and adjustments, though, the controller can be adapted to function effectively in real-world scenarios.
 
-2. Planning Approach: Users can use the `send_av_planning` function to send a high-level planned trajectory for the autonomous vehicle. This trajectory will be processed through our fine-tuned controller ([Preview Control](https://ieeexplore.ieee.org/abstract/document/8637808)) and converted into low-level control commands. The source code can be found in our AV repository, allowing users to gain a deeper understanding of the controller and customize it as needed.
+2. Planning Approach: Users can use the `send_av_planning` function to send a high-level planning trajectory for the autonomous vehicle. This trajectory will be processed through our fine-tuned controller ([Preview Control](https://ieeexplore.ieee.org/abstract/document/8637808)) and converted into low-level control commands. The source code can be found in our AV repository, allowing users to gain a deeper understanding of the controller and customize it as needed.
 
 ## Troubleshooting
 

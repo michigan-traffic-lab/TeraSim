@@ -3,7 +3,7 @@ import time
 
 from terasim_cosim.constants import *
 from terasim_cosim.redis_client_wrapper import create_redis_client
-from terasim_cosim.redis_msgs import PlannedPath, VehicleControl
+from terasim_cosim.redis_msgs import VehiclePlanning, VehicleControl
 
 
 UTM_OFFSET = [-277600 + 102.89, -4686800 + 281.25]
@@ -158,7 +158,7 @@ def send_user_av_planning_wrapper(
     user_msg: str = "user",
 ):
     """
-    Description: Send the planned path to the control AV.
+    Description: Send the vehicle planning trajectory to the control AV.
     """
 
     x_list_center_utm = []
@@ -174,7 +174,7 @@ def send_user_av_planning_wrapper(
         y_list_center_utm.append(y)
         orientation_list_nef.append(orientation)
 
-    vehicle_planning = PlannedPath()
+    vehicle_planning = VehiclePlanning()
 
     vehicle_planning.header.timestamp = time.time()
     vehicle_planning.header.information = user_msg
@@ -187,7 +187,7 @@ def send_user_av_planning_wrapper(
 
     # Configure redis key-and data type
     redis_client = create_redis_client(
-        key_value_config={VEHICLE_PLANNING: PlannedPath},
+        key_value_config={VEHICLE_PLANNING: VehiclePlanning},
         remote_flag=remote_flag,
         pub_channels=[VEHICLE_PLANNING],
         sub_channels=[],
