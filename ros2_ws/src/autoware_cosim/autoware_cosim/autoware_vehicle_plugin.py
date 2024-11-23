@@ -23,10 +23,10 @@ from terasim_cosim.redis_client_wrapper import create_redis_client
 from math import atan2, cos, sin, pi
 
 
-class AutowareCosimPlugin(Node):
+class AutowareVehiclePlugin(Node):
 
     def __init__(self):
-        super().__init__("autoware_cosim_plugin")
+        super().__init__("autoware_vehicle_plugin")
 
         self.declare_parameter("control_cav", True)
         self.declare_parameter(
@@ -334,7 +334,7 @@ class AutowareCosimPlugin(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    node = AutowareCosimPlugin()
+    node = AutowareVehiclePlugin()
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()
