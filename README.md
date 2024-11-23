@@ -40,13 +40,13 @@ conda activate terasim-cosim
 
 #### Clone the Repository
 ```bash
-git clone https://github.com/michigan-traffic-lab/TeraSim-Cosimulation.git
+git clone https://github.com/michigan-traffic-lab/TeraSim.git
 ```
 
 #### Install the Packages
 ```
-# Change directory to TeraSim-Cosimulation
-cd TeraSim-Cosimulation
+# Change directory to TeraSim
+cd TeraSim
 
 # Grant execute permissions to the install.sh script for all users
 sudo chmod +x install.sh
@@ -76,7 +76,7 @@ To start TeraSim, navigate to the example directory.
 cd examples
 ```
 
-TeraSim-Cosimulation offers two modes for controlling background vehicles (BVs):
+TeraSim offers two modes for controlling background vehicles (BVs):
 
 1. Run [Naturalistic Driving Environment (NDE)](https://www.nature.com/articles/s41467-023-37677-5)-based simulation
 ```

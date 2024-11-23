@@ -166,9 +166,9 @@ def send_user_av_planning_wrapper(
     orientation_list_nef = []
 
     for i in range(len(x_list)):
-        x, y = front_coordinate_to_center_coordinate(x_list[i], y_list[i])
-        x, y = sumo_to_utm_coordinate([x, y])
         orientation = sumo_heading_to_orientation(orientation_list[i])
+        x, y = front_coordinate_to_center_coordinate(x_list[i], y_list[i], orientation)
+        x, y = sumo_to_utm_coordinate(x, y)
 
         x_list_center_utm.append(x)
         y_list_center_utm.append(y)
