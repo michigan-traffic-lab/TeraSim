@@ -1,6 +1,6 @@
 import time
 
-# import redis
+import redis
 import math
 import carla
 import random
