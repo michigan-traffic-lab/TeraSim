@@ -18,13 +18,18 @@ class TeraSimCosimPlugin:
         control_cav=False,
         keepRoute=2,
         CAVSpeedOverride=True,
+        pub_channels=[],
+        sub_channels=[],
+        latency_src_channels=[],
     ):
         self.remote_flag = remote_flag
         self.control_cav = control_cav
         self.keepRoute = keepRoute
         self.CAVSpeedOverride = CAVSpeedOverride
 
-        assert self.remote_flag == False, "Please disable remote_flag for testing"
+        self.pub_channels = pub_channels
+        self.sub_channels = sub_channels
+        self.latency_src_channels = latency_src_channels
 
     def on_start(self, simulator: Simulator, ctx):
         key_value_config = {
@@ -32,22 +37,13 @@ class TeraSimCosimPlugin:
             TERASIM_COSIM_VEHICLE_INFO: VehicleDict,
         }
 
-        if self.control_cav:
-            self.redis_client = create_redis_client(
-                key_value_config=key_value_config,
-                remote_flag=self.remote_flag,
-                pub_channels=[CAV_COSIM_VEHICLE_INFO, TERASIM_COSIM_VEHICLE_INFO],
-                sub_channels=[],
-                latency_src_channels=[],
-            )
-        else:
-            self.redis_client = create_redis_client(
-                key_value_config=key_value_config,
-                remote_flag=self.remote_flag,
-                pub_channels=[TERASIM_COSIM_VEHICLE_INFO],
-                sub_channels=[CAV_COSIM_VEHICLE_INFO],
-                latency_src_channels=[],
-            )
+        self.redis_client = create_redis_client(
+            key_value_config=key_value_config,
+            remote_flag=self.remote_flag,
+            pub_channels=self.pub_channels,
+            sub_channels=self.sub_channels,
+            latency_src_channels=self.latency_src_channels,
+        )
 
     def on_step(self, simulator: Simulator, ctx):
         if self.control_cav:

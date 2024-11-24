@@ -10,33 +10,33 @@ from terasim_cosim.redis_msgs import SUMOSignal, SUMOSignalDict
 
 class TeraSimTLSPlugin:
 
-    def __init__(self, remote_flag=False, control_tls=True):
+    def __init__(
+        self,
+        remote_flag=False,
+        control_tls=True,
+        pub_channels=[],
+        sub_channels=[],
+        latency_src_channels=[],
+    ):
         self.remote_flag = remote_flag
         self.control_tls = control_tls
 
-        assert self.remote_flag == False, "Please disable remote_flag for testing"
+        self.pub_channels = pub_channels
+        self.sub_channels = sub_channels
+        self.latency_src_channels = latency_src_channels
 
     def on_start(self, simulator: Simulator, ctx):
         key_value_config = {
             COSIM_TLS_INFO: SUMOSignalDict,
         }
 
-        if self.control_tls:
-            self.redis_client = create_redis_client(
-                key_value_config=key_value_config,
-                remote_flag=self.remote_flag,
-                pub_channels=[COSIM_TLS_INFO],
-                sub_channels=[],
-                latency_src_channels=[],
-            )
-        else:
-            self.redis_client = create_redis_client(
-                key_value_config=key_value_config,
-                remote_flag=self.remote_flag,
-                pub_channels=[],
-                sub_channels=[COSIM_TLS_INFO],
-                latency_src_channels=[],
-            )
+        self.redis_client = create_redis_client(
+            key_value_config=key_value_config,
+            remote_flag=self.remote_flag,
+            pub_channels=self.pub_channels,
+            sub_channels=self.sub_channels,
+            latency_src_channels=self.latency_src_channels,
+        )
 
     def on_step(self, simulator: Simulator, ctx):
         if self.control_tls:

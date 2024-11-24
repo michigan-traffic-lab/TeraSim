@@ -28,31 +28,19 @@ For optimal performance and stability, we recommend installing the system on a d
 
 - __Anaconda__: download and install [Anaconda](https://www.anaconda.com/download/success).
 
-#### Package Installation
-Create a new Conda environment named `terasim-cosim` and install all necessary packages within this environment.
-
-
-#### Crete a Virtual Environment
-```bash
-conda create -n terasim-cosim python=3.10
-conda activate terasim-cosim
-```
 
 #### Clone the Repository
 ```bash
 git clone https://github.com/michigan-traffic-lab/TeraSim.git
 ```
 
-#### Install the Packages
+#### Setup a Virtual Environment
 ```
-# Change directory to TeraSim
-cd TeraSim
+# Create a virtual environment
+conda env create -f terasim-cosim.yaml
 
-# Grant execute permissions to the install.sh script for all users
-sudo chmod +x install.sh
-
-# Execute the install.sh script to start the installation process
-./install.sh
+# Activate the virtual environment
+conda activate terasim-cosim
 ```
 
 ## Usage
