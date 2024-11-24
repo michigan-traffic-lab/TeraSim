@@ -108,9 +108,9 @@ class TeraSimCosimPlugin:
         orientation = traci.vehicle.getAngle("CAV")
         orientation = sumo_heading_to_orientation(orientation)
 
-        location = traci.vehicle.getPosition3D("CAV")
+        x, y, z = traci.vehicle.getPosition3D("CAV")
         x, y = front_coordinate_to_center_coordinate(x, y, orientation, length)
-        x, y = sumo_to_utm_coordinate(location)
+        x, y = sumo_to_utm_coordinate(x, y)
 
         speed = traci.vehicle.getSpeed("CAV")
 
