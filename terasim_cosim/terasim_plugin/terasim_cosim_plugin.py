@@ -1,4 +1,5 @@
 import time
+import math
 
 from terasim.overlay import traci
 from terasim.simulator import Simulator
@@ -18,6 +19,7 @@ class TeraSimCosimPlugin:
         control_cav=False,
         keepRoute=2,
         CAVSpeedOverride=True,
+        bv_max_dist=500.0,
         pub_channels=[],
         sub_channels=[],
         latency_src_channels=[],
@@ -30,6 +32,11 @@ class TeraSimCosimPlugin:
         self.pub_channels = pub_channels
         self.sub_channels = sub_channels
         self.latency_src_channels = latency_src_channels
+
+        self.cav_x = 0.0
+        self.cav_y = 0.0
+
+        self.bv_max_dist = bv_max_dist
 
     def on_start(self, simulator: Simulator, ctx):
         key_value_config = {
@@ -83,6 +90,7 @@ class TeraSimCosimPlugin:
 
             x, y = utm_to_sumo_coordinate(cav_info.x, cav_info.y)
             x, y = center_coordinate_to_front_coordinate(x, y, orientation, length)
+            self.cav_x, self.cav_y = x, y
 
             orientation = orientation_to_sumo_heading(orientation)
 
@@ -109,6 +117,8 @@ class TeraSimCosimPlugin:
         orientation = sumo_heading_to_orientation(orientation)
 
         x, y, z = traci.vehicle.getPosition3D("CAV")
+        self.cav_x, self.cav_y = x, y
+
         x, y = front_coordinate_to_center_coordinate(x, y, orientation, length)
         x, y = sumo_to_utm_coordinate(x, y)
 
@@ -151,6 +161,7 @@ class TeraSimCosimPlugin:
             orientation = sumo_heading_to_orientation(orientation)
 
             x, y, z = traci.vehicle.getPosition3D(vehID)
+            bv_dist = math.sqrt((x - self.cav_x) ** 2 + (y - self.cav_y) ** 2)
 
             x, y = front_coordinate_to_center_coordinate(x, y, orientation, length)
             x, y = sumo_to_utm_coordinate(x, y)
@@ -166,7 +177,8 @@ class TeraSimCosimPlugin:
                 slope=slope,
             )
 
-            terasim_controlled_vehicle_info.data[vehID] = veh_info
+            if bv_dist < self.bv_max_dist:
+                terasim_controlled_vehicle_info.data[vehID] = veh_info
 
         self.redis_client.set(
             TERASIM_COSIM_VEHICLE_INFO,
