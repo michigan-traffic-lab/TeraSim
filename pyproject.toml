@@ -30,5 +30,6 @@ include = [
     "terasim_cosim.redis_client_wrapper",
     "terasim_cosim.redis_msgs",
     "terasim_cosim.terasim_plugin",
+    "terasim_cosim.mcityos"
 ]
 
