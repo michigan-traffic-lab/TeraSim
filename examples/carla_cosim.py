@@ -16,8 +16,7 @@ from utils.geometry import *
 class CarlaCosimPlugin(object):
     def __init__(
         self,
-        cosim_controlled_vehicle_keys=["terasim_cosim_vehicle_info"],
-        control_cav=True,
+        control_cav=False,
     ):
         self.client = carla.Client("127.0.0.1", 2000)
         self.client.set_timeout(2.0)
@@ -25,7 +24,6 @@ class CarlaCosimPlugin(object):
         self.world = self.client.get_world()
 
         self.control_cav = control_cav
-        self.cosim_controlled_vehicle_keys = cosim_controlled_vehicle_keys
 
         self.vehicle_blueprints = create_vehicle_blueprint(self.world)
         self.pedestrian_blueprints = create_pedestrian_blueprint(self.world)
@@ -35,19 +33,21 @@ class CarlaCosimPlugin(object):
 
         key_value_config = {
             CAV_COSIM_VEHICLE_INFO: VehicleDict,
+            TERASIM_COSIM_VEHICLE_INFO: VehicleDict,
         }
-        for key in self.cosim_controlled_vehicle_keys:
-            key_value_config[key] = VehicleDict
+
+        self.cosim_vehicle_updated = False
+        self.prev_cosim_veh_msg_timestamp = 0.0
 
         self.redis_client = create_redis_client(key_value_config=key_value_config)
 
     def tick(self):
+        self.sync_cosim_vehicle_to_carla()
+
         if self.control_cav:
             self.sync_carla_cav_to_cosim()
         else:
             self.sync_cosim_cav_to_carla()
-
-        self.sync_cosim_vehicle_to_carla()
 
         self.world.tick()
 
@@ -95,6 +95,11 @@ class CarlaCosimPlugin(object):
         self.redis_client.set(CAV_COSIM_VEHICLE_INFO, cav_cosim_vehicle_info)
 
     def sync_cosim_cav_to_carla(self):
+        if not self.cosim_vehicle_updated:
+            return
+        else:
+            self.cosim_vehicle_updated = False
+
         try:
             cav_cosim_vehicle_info = self.redis_client.get(CAV_COSIM_VEHICLE_INFO)
         except:
@@ -140,61 +145,67 @@ class CarlaCosimPlugin(object):
                 # )
 
     def sync_cosim_vehicle_to_carla(self):
+        try:
+            cosim_controlled_vehicle_info = self.redis_client.get(
+                TERASIM_COSIM_VEHICLE_INFO
+            )
+        except redis.exceptions.ConnectionError:
+            print(TERASIM_COSIM_VEHICLE_INFO + " not found available. Exiting...")
+            return
+
         cosim_vehicle_id_record = []
 
-        for key in self.cosim_controlled_vehicle_keys:
-            try:
-                cosim_controlled_vehicle_info = self.redis_client.get(key)
-            except redis.exceptions.ConnectionError:
-                print(key + " not found available. Exiting...")
-                continue
+        if cosim_controlled_vehicle_info:
+            cosim_veh_msg_timestamp = cosim_controlled_vehicle_info.header.timestamp
+            if (cosim_veh_msg_timestamp - self.prev_cosim_veh_msg_timestamp) < 1e-3:
+                return
 
-            if cosim_controlled_vehicle_info:
-                data = cosim_controlled_vehicle_info.data
+            self.cosim_vehicle_updated = True
+            self.prev_cosim_veh_msg_timestamp = cosim_veh_msg_timestamp
 
-                # iterates over sumo actors and updates them in carla.
-                for vehID in data:
-                    cosim_vehicle_id_record.append(vehID)
-                    veh_info = data[vehID]
+            data = cosim_controlled_vehicle_info.data
 
-                    x, y = utm_to_carla(veh_info.x, veh_info.y)
-                    z = get_carla_height(self.heights, x, y)
-                    yaw = -math.degrees(veh_info.orientation)
+            # iterates over sumo actors and updates them in carla.
+            for vehID in data:
+                cosim_vehicle_id_record.append(vehID)
+                veh_info = data[vehID]
 
-                    transform = carla.Transform()
-                    transform.location.x = x
-                    transform.location.y = y
-                    transform.location.z = z
-                    transform.rotation.yaw = yaw
+                x, y = utm_to_carla(veh_info.x, veh_info.y)
+                z = get_carla_height(self.heights, x, y)
+                yaw = -math.degrees(veh_info.orientation)
 
-                    actor_status, carla_id = get_actor_id_from_attribute(
-                        self.world, vehID
-                    )
+                transform = carla.Transform()
+                transform.location.x = x
+                transform.location.y = y
+                transform.location.z = z
+                transform.rotation.yaw = yaw
 
-                    # Creating new carla actor or updating existing one.
-                    if not actor_status:
-                        if isVehicle(vehID):
-                            blueprint = random.choice(self.vehicle_blueprints)
-                            blueprint.set_attribute("role_name", vehID)
-                            blueprint.set_attribute("color", "0, 102, 204")
-                            transform.location.z += 2.0
-                            carla_id = spawn_actor(self.client, blueprint, transform)
-                            print("Spawned actor in CARLA: ", vehID)
-                        elif isPedestrian(vehID):
-                            blueprint = random.choice(self.pedestrian_blueprints)
-                            blueprint.set_attribute("role_name", vehID)
-                            transform.location.z += 2.0
-                            carla_id = spawn_actor(self.client, blueprint, transform)
-                            print("Spawned actor in CARLA: ", vehID)
-                    else:
-                        actor = self.world.get_actor(carla_id)
+                actor_status, carla_id = get_actor_id_from_attribute(self.world, vehID)
 
-                        if isVehicle(vehID):
-                            transform.location.z += 0.0
-                        if isPedestrian(vehID):
-                            transform.location.z += 1.0
+                # Creating new carla actor or updating existing one.
+                if not actor_status:
+                    if isVehicle(vehID):
+                        blueprint = random.choice(self.vehicle_blueprints)
+                        blueprint.set_attribute("role_name", vehID)
+                        blueprint.set_attribute("color", "0, 102, 204")
+                        transform.location.z += 2.0
+                        carla_id = spawn_actor(self.client, blueprint, transform)
+                        print("Spawned actor in CARLA: ", vehID)
+                    elif isPedestrian(vehID):
+                        blueprint = random.choice(self.pedestrian_blueprints)
+                        blueprint.set_attribute("role_name", vehID)
+                        transform.location.z += 2.0
+                        carla_id = spawn_actor(self.client, blueprint, transform)
+                        print("Spawned actor in CARLA: ", vehID)
+                else:
+                    actor = self.world.get_actor(carla_id)
 
-                        actor.set_transform(transform)
+                    if isVehicle(vehID):
+                        transform.location.z += 0.0
+                    if isPedestrian(vehID):
+                        transform.location.z += 1.0
+
+                    actor.set_transform(transform)
 
         carla_actors = list(self.world.get_actors().filter("vehicle.*")) + list(
             self.world.get_actors().filter("walker.pedestrian.*")
@@ -209,7 +220,7 @@ class CarlaCosimPlugin(object):
 
 def main():
     carla_cosim_plugin = CarlaCosimPlugin()
-    step_length = 0.04
+    step_length = 0.02
 
     settings = carla_cosim_plugin.world.get_settings()
     settings.fixed_delta_seconds = step_length
