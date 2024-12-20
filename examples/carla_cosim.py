@@ -188,13 +188,13 @@ class CarlaCosimPlugin(object):
                         blueprint = random.choice(self.vehicle_blueprints)
                         blueprint.set_attribute("role_name", vehID)
                         blueprint.set_attribute("color", "0, 102, 204")
-                        transform.location.z += 2.0
+                        transform.location.z += 0.2
                         carla_id = spawn_actor(self.client, blueprint, transform)
                         print("Spawned actor in CARLA: ", vehID)
                     elif isPedestrian(vehID):
                         blueprint = random.choice(self.pedestrian_blueprints)
                         blueprint.set_attribute("role_name", vehID)
-                        transform.location.z += 2.0
+                        transform.location.z += 1.0
                         carla_id = spawn_actor(self.client, blueprint, transform)
                         print("Spawned actor in CARLA: ", vehID)
                 else:
