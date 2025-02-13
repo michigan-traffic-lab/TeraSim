@@ -25,27 +25,43 @@ def create_vehicle_blueprint(world):
         for bp in blueprint_library.filter("vehicle.*")
         if any(keyword in bp.id for keyword in car_keywords)
     ]
-
     return vehicle_blueprints
 
+def create_bike_blueprint(world):
+    blueprint_library = world.get_blueprint_library()
+
+    bike_keywords = ["vehicle.gazelle.omafiets", "vehicle.diamondback.century", "vehicle.bh.crossbike"]
+
+    bike_blueprints = [
+        bp
+        for bp in blueprint_library.filter("vehicle.*")
+        if any(keyword in bp.id for keyword in bike_keywords)
+    ]
+
+    return bike_blueprints
 
 def create_pedestrian_blueprint(world):
     blueprint_library = world.get_blueprint_library()
 
-    pedestrian_keywords = ["walker.pedestrian.0002"]
-
-    pedestrian_blueprints = [
-        bp
-        for bp in blueprint_library.filter("walker.*")
-        if any(keyword in bp.id for keyword in pedestrian_keywords)
-    ]
+    pedestrian_blueprints = blueprint_library.filter(
+            "walker.pedestrian.*"
+        )
 
     return pedestrian_blueprints
+
+def create_motor_blueprint(world):
+    blueprint_library = world.get_blueprint_library()
+    motor_keywords = ["vehicle.yamaha.yzf", "vehicle.vespa.zx125", "vehicle.kawasaki.ninja", "vehicle.harley-davidson.low_rider"]
+    motor_blueprints = [
+            bp
+            for bp in blueprint_library.filter("vehicle.*")
+            if any(keyword in bp.id for keyword in motor_keywords)
+        ]
+    return motor_blueprints
 
 
 def isVehicle(actorID):
     return "BV" in actorID or "CAV" in actorID or "POV" in actorID or "VUT" in actorID
-
 
 def isPedestrian(actorID):
     return "VRU" in actorID
@@ -62,10 +78,10 @@ def spawn_actor(client, blueprint, transform):
 
     batch = [
         carla.command.SpawnActor(blueprint, transform).then(
-            carla.command.SetSimulatePhysics(carla.command.FutureActor, False)
+            carla.command.SetSimulatePhysics(carla.command.FutureActor, True)
         )
     ]
-    response = client.apply_batch_sync(batch, False)[0]
+    response = client.apply_batch_sync(batch, True)[0]
     if response.error:
         logging.error("Spawn carla actor failed. %s", response.error)
         return -1
@@ -76,7 +92,7 @@ def spawn_actor(client, blueprint, transform):
 def destroy_all_actors(world):
     carla_actors = list(world.get_actors().filter("vehicle.*")) + list(
         world.get_actors().filter("walker.pedestrian.*")
-    )
+    ) + list(world.get_actors().filter('static.prop.constructioncone'))
 
     for actor in carla_actors:
         actor.destroy()

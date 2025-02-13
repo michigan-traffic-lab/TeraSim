@@ -12,7 +12,7 @@ authors = [
     {name = "Haojie Zhu", email = "zhuhj@umich.edu"}
 ]
 license = {text = "MIT"}
-urls = {homepage = "https://github.com/michigan-traffic-lab/TeraSim-Cosim"}
+#urls = {homepage = "https://github.com/michigan-traffic-lab/TeraSim-Cosim"}
 
 dependencies = [
     "pygame==2.6.1",

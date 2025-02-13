@@ -9,7 +9,7 @@ from terasim_nde_nade.vehicle.nde_vehicle_factory import NDEVehicleFactory
 from envs.safetest_nade_with_av_cosim import SafeTestNADEWithAVCosim
 
 from terasim_cosim.terasim_plugin.terasim_tls_plugin import TeraSimTLSPlugin
-from terasim_cosim.terasim_plugin.terasim_cosim_plugin import TeraSimCosimPlugin
+from terasim_cosim.terasim_plugin.terasim_cosim_plugin import TeraSimCoSimPlugin
 
 from terasim_user_functions import user_step
 
@@ -53,7 +53,7 @@ sim = Simulator(
 
 # Vehicle Co-simulation
 sim.add_plugin(
-    TeraSimCosimPlugin(
+    TeraSimCoSimPlugin(
         remote_flag=False,  # connect to mcityos, disable for local testing
         control_cav=False,  # allow outside source to synchronize av state, like CARLA
         keepRoute=2,  # Traci keep route defition, 2 being the most flexible

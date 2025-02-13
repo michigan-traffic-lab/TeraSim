@@ -2,11 +2,12 @@ from .GeneralMsg import GeneralMsg
 from .Header import Header
 from .Metric import Metric
 from .MetricDict import MetricDict
-from .Pedestrian import Pedestrian
-from .VehiclePlanning import VehiclePlanning
+from .PlannedPath import PlannedPath
 from .SUMOSignal import SUMOSignal
 from .SUMOSignalDict import SUMOSignalDict
 from .Vehicle import Vehicle
 from .VehicleDict import VehicleDict
 from .VehicleControl import VehicleControl
+from .VehiclePlanning import VehiclePlanning
 from .VehicleState import VehicleState
+from .ConstructionZone import ConstructionZone

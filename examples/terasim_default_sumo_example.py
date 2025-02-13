@@ -8,7 +8,7 @@ from terasim_user_functions import user_step
 
 from terasim_cosim.constants import *
 from terasim_cosim.terasim_plugin.terasim_tls_plugin import TeraSimTLSPlugin
-from terasim_cosim.terasim_plugin.terasim_cosim_plugin import TeraSimCosimPlugin
+from terasim_cosim.terasim_plugin.terasim_cosim_plugin import TeraSimCoSimPlugin
 
 from envs.env_mcity_joint_control import (
     TeraSimEnvForUser,
@@ -41,7 +41,7 @@ sim = Simulator(
 
 # Vehicle Co-simulation
 sim.add_plugin(
-    TeraSimCosimPlugin(
+    TeraSimCoSimPlugin(
         remote_flag=False,  # connect to mcityos, disable for local testing
         control_cav=False,  # allow outside source to synchronize av state, like CARLA
         keepRoute=2,  # Traci keep route defition, 2 being the most flexible

@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-
+from terasim_cosim.redis_msgs import Header
 
 class Vehicle(BaseModel):
     # Acceleration
@@ -43,5 +43,9 @@ class Vehicle(BaseModel):
     speed_lat: float = 0.0
 
     # additional information of the vehicle
-    type: str = "passenger"
+    direction_x: float = 0.0
+    direction_y: float = 0.0
+
+    # additional information of the vehicle
+    type: str = ""
     additional_information: str = ""
