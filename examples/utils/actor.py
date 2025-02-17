@@ -59,6 +59,10 @@ def create_motor_blueprint(world):
         ]
     return motor_blueprints
 
+def create_construction_zone_blueprint(world):
+    blueprint_library = world.get_blueprint_library()
+    construction_zone_blueprint = blueprint_library.filter("static.prop.constructioncone")
+    return construction_zone_blueprint
 
 def isVehicle(actorID):
     return "BV" in actorID or "CAV" in actorID or "POV" in actorID or "VUT" in actorID
