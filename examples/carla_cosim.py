@@ -35,8 +35,8 @@ class CarlaCosimPlugin(object):
         self.pedestrian_blueprints = create_pedestrian_blueprint(self.world)
         self.bike_blueprints = create_bike_blueprint(self.world)
 
-        height_path = "/home/zhijie/terasim/TeraSim/examples/utils/test_heights.json"
-        self.heights = extract_data_from_json_file(height_path)
+        # height_path = "/home/zhijie/terasim/TeraSim/examples/utils/test_heights.json"
+        # self.heights = extract_data_from_json_file(height_path)
 
         key_value_config = {
             CAV_COSIM_VEHICLE_INFO: VehicleDict,
@@ -87,7 +87,8 @@ class CarlaCosimPlugin(object):
         y = transform.location.y
 
         utm_x, utm_y = carla_to_utm(x, y)
-        height = get_carla_height(self.heights, x, y)
+        # height = get_carla_height(self.heights, x, y)
+        height = self.get_z_offset(start_location=carla.Location(transform.location.x, transform.location.y, 300),end_location=carla.Location(transform.location.x, transform.location.y, 200))
 
         cav_cosim_vehicle_info.data["CAV"] = Vehicle(
             x=utm_x,
