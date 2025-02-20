@@ -11,8 +11,8 @@ from terasim_cosim.constants import *
 from terasim_cosim.terasim_plugin.utils import *
 from terasim_cosim.redis_client_wrapper import create_redis_client
 from terasim_cosim.redis_msgs import (
-    Vehicle,
-    VehicleDict,
+    Actor,
+    ActorDict,
     ConstructionZone,
 )
 
@@ -53,14 +53,15 @@ class TeraSimCoSimPlugin:
 
     def on_start(self, simulator: Simulator, ctx):
         key_value_config = {
-            CAV_COSIM_VEHICLE_INFO: VehicleDict,
-            TERASIM_COSIM_PARTICIPANTS_INFO: VehicleDict,
-            CONSTRUCTION_ZONE_COSIM_INFO: ConstructionZone,
+            CAV_INFO: ActorDict,
+            TERASIM_ACTOR_INFO: ActorDict,
+            CONSTRUCTION_ZONE_INFO: ConstructionZone,
         }
+
         for key in self.cosim_controlled_vehicle_keys:
-            key_value_config[key] = VehicleDict
+            key_value_config[key] = ActorDict
         for key in self.cosim_controlled_pedestrian_keys:
-            key_value_config[key] = VehicleDict
+            key_value_config[key] = ActorDict
 
         self.redis_client = create_redis_client(
             key_value_config=key_value_config,
@@ -78,8 +79,10 @@ class TeraSimCoSimPlugin:
             self.sync_terasim_cav_to_cosim()
         else:
             self.sync_cosim_cav_to_terasim()
+
         self.ped_list = traci.person.getIDList()
-        self.sync_terasim_participants_to_cosim()
+
+        self.sync_terasim_actor_to_cosim()
         self.sync_terasim_construction_zone_to_cosim()
         # self.sync_cosim_vehicle_to_terasim()
 
@@ -154,20 +157,18 @@ class TeraSimCoSimPlugin:
             shapes = calculate_edge_and_starting_edge(
                 shapes, traci.lane.getWidth(closed_lane_id), lane_pos
             )
-            shapes = [
-                [x - UTM_OFFSET[0], y - UTM_OFFSET[1]] for x, y in shapes
-            ]
+            shapes = [[x - UTM_OFFSET[0], y - UTM_OFFSET[1]] for x, y in shapes]
             closed_lane_shapes.append(shapes)
         construction_zone_terasim_info = ConstructionZone()
         construction_zone_terasim_info.header.timestamp = time.time()
         construction_zone_terasim_info.closed_lane_id = closed_lane_ids
         construction_zone_terasim_info.closed_lane_shapes = closed_lane_shapes
         self.redis_client.set(
-            CONSTRUCTION_ZONE_COSIM_INFO,
+            CONSTRUCTION_ZONE_INFO,
             construction_zone_terasim_info,
         )
 
-        # retrieved_data = self.redis_client.get(CONSTRUCTION_ZONE_COSIM_INFO)
+        # retrieved_data = self.redis_client.get(CONSTRUCTION_ZONE_INFO)
         # assert retrieved_data is not None, "Construction zone data is missing in Redis"
 
     def sync_terasim_cav_to_cosim(self):
@@ -188,9 +189,9 @@ class TeraSimCoSimPlugin:
 
         speed = traci.vehicle.getSpeed("CAV")
 
-        cav_cosim_vehicle_info = VehicleDict()
-        cav_cosim_vehicle_info.header.timestamp = time.time()
-        cav_cosim_vehicle_info.data["CAV"] = Vehicle(
+        cav_info = ActorDict()
+        cav_info.header.timestamp = time.time()
+        cav_info.data["CAV"] = Actor(
             x=x,
             y=y,
             z=z,
@@ -201,17 +202,17 @@ class TeraSimCoSimPlugin:
             speed_long=speed,
         )
 
-        self.redis_client.set(CAV_COSIM_VEHICLE_INFO, cav_cosim_vehicle_info)
+        self.redis_client.set(CAV_INFO, cav_info)
 
     def sync_cosim_cav_to_terasim(self):
         try:
-            cav_cosim_vehicle_info = self.redis_client.get(CAV_COSIM_VEHICLE_INFO)
+            cav_info = self.redis_client.get(CAV_INFO)
         except:
-            print("cav_cosim_vehicle_info not available. Exiting...")
+            print("cav_info not available. Exiting...")
             return
 
-        if cav_cosim_vehicle_info:
-            cav_info = cav_cosim_vehicle_info.data["CAV"]
+        if cav_info:
+            cav_info = cav_info.data["CAV"]
 
             x = cav_info.x + UTM_OFFSET[0]
             y = cav_info.y + UTM_OFFSET[1]
@@ -226,12 +227,12 @@ class TeraSimCoSimPlugin:
                 traci.vehicle.moveToXY(
                     "CAV", "", 0, x, y, angle=orientation, keepRoute=self.keepRoute
                 )
-                if self.setCAVSpeed:
+                if self.CAVSpeedOverride:
                     traci.vehicle.setSpeedMode("CAV", 0)
                     traci.vehicle.setSpeed("CAV", speed_long)
 
-    def sync_terasim_participants_to_cosim(self):
-        """sync sumo controlled participants to cosim"""
+    def sync_terasim_actor_to_cosim(self):
+        """sync sumo controlled actor to cosim"""
         veh_list = self.simulator.get_vehID_list()
         ped_list = self.ped_list
 
@@ -244,11 +245,9 @@ class TeraSimCoSimPlugin:
             pedID for pedID in ped_list if "VRU_" in pedID
         ]
 
-        # Vehicles
-        terasim_controlled_participant_info_with_timestamp = VehicleDict()
-        terasim_controlled_participant_info_with_timestamp.header.timestamp = (
-            time.time()
-        )
+        terasim_controlled_actor_info_with_timestamp = ActorDict()
+        terasim_controlled_actor_info_with_timestamp.header.timestamp = time.time()
+
         for vehID in terasim_controlled_vehicle_list:
             orientation = traci.vehicle.getAngle(vehID)
             orientation = sumo_heading_to_orientation(orientation)
@@ -263,7 +262,7 @@ class TeraSimCoSimPlugin:
             speed = traci.vehicle.getSpeed(vehID)
             slope = traci.vehicle.getSlope(vehID)
             type = traci.vehicle.getTypeID(vehID)
-            veh_info = Vehicle(
+            veh_info = Actor(
                 x=x,
                 y=y,
                 z=z,
@@ -275,7 +274,7 @@ class TeraSimCoSimPlugin:
                 slope=slope,
                 type=type,
             )
-            terasim_controlled_participant_info_with_timestamp.data[vehID] = veh_info
+            terasim_controlled_actor_info_with_timestamp.data[vehID] = veh_info
 
         # Pedestrians
         for pedID in terasim_controlled_pedestrian_list:
@@ -292,7 +291,7 @@ class TeraSimCoSimPlugin:
             speed = traci.person.getSpeed(pedID)
             type = traci.person.getTypeID(pedID)
             direction_x, direction_y = math.cos(orientation), math.sin(orientation)
-            ped_info = Vehicle(
+            ped_info = Actor(
                 x=x,
                 y=y,
                 z=z,
@@ -306,11 +305,10 @@ class TeraSimCoSimPlugin:
                 type=type,
             )
 
-            terasim_controlled_participant_info_with_timestamp.data[pedID] = ped_info
+            terasim_controlled_actor_info_with_timestamp.data[pedID] = ped_info
 
         self.redis_client.set(
-            TERASIM_COSIM_PARTICIPANTS_INFO,
-            terasim_controlled_participant_info_with_timestamp,
+            TERASIM_ACTOR_INFO, terasim_controlled_actor_info_with_timestamp
         )
 
     def sync_cosim_vehicle_to_terasim(self):

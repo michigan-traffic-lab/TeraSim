@@ -55,7 +55,7 @@ sim = Simulator(
 sim.add_plugin(
     TeraSimCoSimPlugin(
         remote_flag=False,  # connect to mcityos, disable for local testing
-        control_cav=False,  # allow outside source to synchronize av state, like CARLA
+        control_cav=True,  # allow outside source to synchronize av state, like CARLA
         keepRoute=2,  # Traci keep route defition, 2 being the most flexible
         CAVSpeedOverride=True,  # Allow speed override for CAV in Terasim
         pub_channels=[],  # Publish channels (mcityos remote only)

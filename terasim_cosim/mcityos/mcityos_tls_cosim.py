@@ -57,9 +57,9 @@ class McityOSTLSCosim:
         self.state2int_web = {"green": 0, "yellow": 1, "red": 2}
 
         self.redis_client = create_redis_client(
-            key_value_config={COSIM_TLS_INFO: SUMOSignalDict}
+            key_value_config={TLS_INFO: SUMOSignalDict}
         )
-        
+
         print("McityOS traffic light synchronization started!")
 
     def sync_mcityos_tls_to_cosim(self):
@@ -79,7 +79,7 @@ class McityOSTLSCosim:
                     signal.tls = states[node_id]
                     mcityos_tls_info.data[node_id] = signal
 
-                self.redis_client.set(COSIM_TLS_INFO, mcityos_tls_info)
+                self.redis_client.set(TLS_INFO, mcityos_tls_info)
 
                 time.sleep(0.05)
 
