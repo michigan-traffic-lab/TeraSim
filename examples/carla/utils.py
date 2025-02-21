@@ -105,10 +105,10 @@ def spawn_actor(client, blueprint, transform):
 
     batch = [
         carla.command.SpawnActor(blueprint, transform).then(
-            carla.command.SetSimulatePhysics(carla.command.FutureActor, True)
+            carla.command.SetSimulatePhysics(carla.command.FutureActor, False)
         )
     ]
-    response = client.apply_batch_sync(batch, True)[0]
+    response = client.apply_batch_sync(batch, False)[0]
     if response.error:
         logging.error("Spawn carla actor failed. %s", response.error)
         return -1
