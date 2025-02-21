@@ -3,8 +3,8 @@
 <configuration>
 
     <input>
-        <net-file value="mcity.net.xml"/>
-        <route-files value="mcity.route.xml"/>
+        <net-file value="mcity_disallow_ped_adjusted_test.net.xml"/>
+        <route-files value="mcity_dev.route.xml"/>
         <gui-settings-file value="gui-settings.xml"/>
         <step-length value = "0.1"/>
     </input>
