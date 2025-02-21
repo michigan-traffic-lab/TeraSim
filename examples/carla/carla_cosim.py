@@ -160,7 +160,7 @@ class CarlaCosimPlugin(object):
             try:
                 cosim_controlled_actor_info = self.redis_client.get(key)
             except redis.exceptions.ConnectionError:
-                print(key + " not found available. Exiting...")
+                # print(key + " not found available. Exiting...")
                 continue
 
         if cosim_controlled_actor_info:
@@ -264,7 +264,7 @@ class CarlaCosimPlugin(object):
                 carla.Location(x=x, y=y, z=z + 0.5), carla.Rotation(yaw=yaw)
             )
             carla_id = spawn_actor(self.client, blueprint, transform)
-            print(f"Spawned vehicle in CARLA: {id}")
+            # print(f"Spawned vehicle in CARLA: {id}")
         else:
             vehicle = self.world.get_actor(carla_id)
             current_transform = vehicle.get_transform()
@@ -287,7 +287,6 @@ class CarlaCosimPlugin(object):
     def _process_pedestrian(self, id, vru_info, cosim_id_record):
         """Process a pedestrian actor."""
         cosim_id_record.add(id)
-
         x, y = utm_to_carla(vru_info.x, vru_info.y)
         start_location = carla.Location(x, y, vru_info.z + 5)
         end_location = carla.Location(x, y, vru_info.z - 5)
@@ -319,9 +318,12 @@ class CarlaCosimPlugin(object):
             transform = carla.Transform(
                 carla.Location(x=x, y=y, z=z), carla.Rotation(yaw=yaw)
             )
+            pedestrian.set_transform(transform)
 
         if carla_id > 0:
             if vru_info.type != "DEFAULT_BIKETYPE":
+                if id == "VRU_1.0":
+                    print(f"VRU_1.0: {x}, {y}, {z}")
                 walker_control = carla.WalkerControl(
                     direction=carla.Vector3D(
                         vru_info.direction_x, vru_info.direction_y, 0
