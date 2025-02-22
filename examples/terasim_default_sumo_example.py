@@ -31,10 +31,11 @@ env = TeraSimEnvForUser(
 
 # Create the simulator
 sim = Simulator(
-    sumo_net_file_path=maps_path / "mcity.net.xml",
+    # sumo_net_file_path=maps_path / "mcity.net.xml",
+    sumo_net_file_path=maps_path / "mcity_disallow_ped_adjusted_test.net.xml",
     sumo_config_file_path=maps_path / "mcity.sumocfg",
     num_tries=10,
-    gui_flag=True,
+    gui_flag=False,
     realtime_flag=True,
     additional_sumo_args=["--start", "--quit-on-end"],
 )

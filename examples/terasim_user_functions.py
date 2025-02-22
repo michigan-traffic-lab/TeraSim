@@ -24,8 +24,8 @@ def user_step(traci):
     # print(tls_info)
 
     # send control or planning commands (only one should be active)
-    send_av_control(vehicle_info)
-    send_av_planning(vehicle_info)
+    # send_av_control(vehicle_info)
+    # send_av_planning(vehicle_info)
 
     # IMPORANT
     # update BVs through traci, only use this function for plain terasim simulation
