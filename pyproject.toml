@@ -20,7 +20,8 @@ dependencies = [
     "typing_extensions==4.12.2",
     "numpy==1.26.4",
     "pydantic==2.6.3",
-    "redis==5.0.2"
+    "redis==5.0.2",
+    "utm==0.8.0",
 ]
 
 [tool.setuptools.packages.find]
