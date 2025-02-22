@@ -349,6 +349,7 @@ class CarlaCosimPlugin(object):
             transform = carla.Transform(
                 carla.Location(x=x, y=y, z=z), carla.Rotation(yaw=yaw)
             )
+            pedestrian.set_transform(transform)
 
         if carla_id > 0:
             if vru_info.type != "DEFAULT_BIKETYPE":
