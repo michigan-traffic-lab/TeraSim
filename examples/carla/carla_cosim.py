@@ -255,7 +255,8 @@ class CarlaCosimPlugin(object):
                     spawn_point.location.x, spawn_point.location.y = utm_to_carla(
                         cone_point[0], cone_point[1]
                     )
-                    spawn_point.location.z = self.get_z_offset(
+                    spawn_point.location.z = get_z_offset(
+                        self.world,
                         start_location=carla.Location(
                             spawn_point.location.x, spawn_point.location.y, 300
                         ),
@@ -332,7 +333,7 @@ class CarlaCosimPlugin(object):
                 else self.pedestrian_blueprints
             )
             blueprint.set_attribute("role_name", id)
-            z = self.get_z_offset(start_location, end_location)
+            z = get_z_offset(self.world, start_location, end_location)
             transform = carla.Transform(
                 carla.Location(x=x, y=y, z=z + 1), carla.Rotation(yaw=yaw)
             )
@@ -343,8 +344,8 @@ class CarlaCosimPlugin(object):
             # transform.location.z += 1.0
             pedestrian = self.world.get_actor(carla_id)
             current_transform = pedestrian.get_transform()
-            z = self.get_z_offset(
-                start_location, end_location, current_transform.location.z
+            z = get_z_offset(
+                self.world, start_location, end_location, current_transform.location.z
             )
             transform = carla.Transform(
                 carla.Location(x=x, y=y, z=z), carla.Rotation(yaw=yaw)
