@@ -5,7 +5,7 @@ import carla
 import random
 from terasim_cosim.constants import *
 from terasim_cosim.redis_client_wrapper import create_redis_client
-from terasim_cosim.redis_msgs import Actor, ActorDict, ConstructionZone
+from terasim_cosim.redis_msgs import Actor, ActorDict, ConstructionZone, SUMOSignalDict
 from utils import *
 
 
@@ -13,7 +13,7 @@ class CarlaCosimPlugin(object):
     def __init__(
         self,
         cosim_controlled_actor_keys=[TERASIM_ACTOR_INFO],
-        control_cav=True,
+        control_cav=False,
     ):
         self.client = carla.Client("127.0.0.1", 2000)
         self.client.set_timeout(2.0)
@@ -32,6 +32,7 @@ class CarlaCosimPlugin(object):
             CAV_INFO: ActorDict,
             TERASIM_ACTOR_INFO: ActorDict,
             CONSTRUCTION_ZONE_INFO: ConstructionZone,
+            TLS_INFO: SUMOSignalDict,
         }
 
         self.redis_client = create_redis_client(key_value_config=key_value_config)
@@ -43,6 +44,7 @@ class CarlaCosimPlugin(object):
             self.sync_cosim_cav_to_carla()
 
         self.sync_cosim_actor_to_carla()
+        self.sync_cosim_tls_to_carla()
         # self.sync_cosim_construction_zone_to_carla()
 
         self.world.tick()
@@ -152,6 +154,34 @@ class CarlaCosimPlugin(object):
 
         # self.update_spectator_camera(transform)
 
+    def sync_cosim_tls_to_carla(self):
+        try:
+            cosim_tls_info = self.redis_client.get(TLS_INFO)
+        except:
+            print("cosim_tls_info not available. Exiting...")
+            return
+
+        if cosim_tls_info:
+            tls_data = cosim_tls_info.data
+
+            for node in tls_data:
+                node_tls = tls_data[node]
+                carla_light_ids = TLS_NODES[node]
+
+                for i in range(len(carla_light_ids)):
+                    light_id = carla_light_ids[i]
+
+                    if light_id:
+                        light_actor = self.world.get_actor(carla_light_ids[i])
+                        light_state = node_tls.tls[i]
+
+                        if light_state == "G" or light_state == "g":
+                            light_actor.set_state(carla.TrafficLightState.Green)
+                        elif light_state == "Y" or light_state == "y":
+                            light_actor.set_state(carla.TrafficLightState.Yellow)
+                        elif light_state == "R" or light_state == "r":
+                            light_actor.set_state(carla.TrafficLightState.Red)
+
     def sync_cosim_actor_to_carla(self):
         """Update all actors in cosim to CARLA."""
 
@@ -160,7 +190,7 @@ class CarlaCosimPlugin(object):
             try:
                 cosim_controlled_actor_info = self.redis_client.get(key)
             except redis.exceptions.ConnectionError:
-                # print(key + " not found available. Exiting...")
+                print(key + " not found available. Exiting...")
                 continue
 
         if cosim_controlled_actor_info:
@@ -225,8 +255,8 @@ class CarlaCosimPlugin(object):
                     spawn_point.location.x, spawn_point.location.y = utm_to_carla(
                         cone_point[0], cone_point[1]
                     )
-                    spawn_point.location.z = get_z_offset(
-                        self.world, start_location=carla.Location(
+                    spawn_point.location.z = self.get_z_offset(
+                        start_location=carla.Location(
                             spawn_point.location.x, spawn_point.location.y, 300
                         ),
                         end_location=carla.Location(
@@ -239,7 +269,7 @@ class CarlaCosimPlugin(object):
                         transform=spawn_point,
                     )
                     print(f"created construction cone: {id}")
-    
+
     def _process_vehicle(self, id, veh_info, cosim_id_record):
         """Process a vehicle actor."""
         cosim_id_record.add(id)
@@ -264,7 +294,7 @@ class CarlaCosimPlugin(object):
                 carla.Location(x=x, y=y, z=z + 0.5), carla.Rotation(yaw=yaw)
             )
             carla_id = spawn_actor(self.client, blueprint, transform)
-            # print(f"Spawned vehicle in CARLA: {id}")
+            print(f"Spawned vehicle in CARLA: {id}")
         else:
             vehicle = self.world.get_actor(carla_id)
             current_transform = vehicle.get_transform()
@@ -287,6 +317,7 @@ class CarlaCosimPlugin(object):
     def _process_pedestrian(self, id, vru_info, cosim_id_record):
         """Process a pedestrian actor."""
         cosim_id_record.add(id)
+
         x, y = utm_to_carla(vru_info.x, vru_info.y)
         start_location = carla.Location(x, y, vru_info.z + 5)
         end_location = carla.Location(x, y, vru_info.z - 5)
@@ -301,7 +332,7 @@ class CarlaCosimPlugin(object):
                 else self.pedestrian_blueprints
             )
             blueprint.set_attribute("role_name", id)
-            z = get_z_offset(self.world, start_location, end_location)
+            z = self.get_z_offset(start_location, end_location)
             transform = carla.Transform(
                 carla.Location(x=x, y=y, z=z + 1), carla.Rotation(yaw=yaw)
             )
@@ -312,18 +343,15 @@ class CarlaCosimPlugin(object):
             # transform.location.z += 1.0
             pedestrian = self.world.get_actor(carla_id)
             current_transform = pedestrian.get_transform()
-            z = get_z_offset(
-                self.world, start_location, end_location, current_transform.location.z
+            z = self.get_z_offset(
+                start_location, end_location, current_transform.location.z
             )
             transform = carla.Transform(
                 carla.Location(x=x, y=y, z=z), carla.Rotation(yaw=yaw)
             )
-            pedestrian.set_transform(transform)
 
         if carla_id > 0:
             if vru_info.type != "DEFAULT_BIKETYPE":
-                if id == "VRU_1.0":
-                    print(f"VRU_1.0: {x}, {y}, {z}")
                 walker_control = carla.WalkerControl(
                     direction=carla.Vector3D(
                         vru_info.direction_x, vru_info.direction_y, 0

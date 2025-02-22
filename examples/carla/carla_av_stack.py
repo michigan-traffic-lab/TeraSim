@@ -242,14 +242,14 @@ class World(object):
         )
 
         self.blueprint_library = self.world.get_blueprint_library()
-        blueprint = self.blueprint_library.find("vehicle.lincoln.mkz_2017")
+        blueprint = self.blueprint_library.find("vehicle.lincoln.mkz_2020")
 
         if blueprint.has_attribute("role_name"):
             blueprint.set_attribute("role_name", "CAV")
         if blueprint.has_attribute("terramechanics"):
             blueprint.set_attribute("terramechanics", "true")
         if blueprint.has_attribute("color"):
-            blueprint.set_attribute("color", "255,255,255")
+            blueprint.set_attribute("color", "255,0,0")
         if blueprint.has_attribute("driver_id"):
             driver_id = random.choice(
                 blueprint.get_attribute("driver_id").recommended_values
