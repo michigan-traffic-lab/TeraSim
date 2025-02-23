@@ -10,12 +10,12 @@ ZONE_LETTER = "T"
 GNSS_ORIGIN = [42.3005934157, -83.699283188811]
 
 TLS_NODES = {
-    "NODE_11": [83, 92, None, 88, 89, 86, None, 84],
-    "NODE_12": [78, 82, 81, 80],
-    "NODE_17": [61, 62, 67, 68, 65, 66, None, 63, 64],
-    "NODE_18": [69, None, 75, None, 73, None, 71, None],
-    "NODE_23": [110, None, 112, 107],
-    "NODE_24": [47, None, 48, 52],
+    "NODE_11": [(83,), (92,), None, (88,), (89,), (86,), None, (84,)],
+    "NODE_12": [(78,), (82,), (81,), (80,)],
+    "NODE_17": [(61,), (62,), (67,), (68,), (65,), (66,), None, (63,), (64,)],
+    "NODE_18": [(69, 70), None, (75,), None, (73, 74), None, (71,), None],
+    "NODE_23": [(110,), None, (112,), (107,)],
+    "NODE_24": [(47,), None, (48,), (52,)],
 }
 
 
@@ -114,7 +114,7 @@ def spawn_actor(client, blueprint, transform):
 
     batch = [
         carla.command.SpawnActor(blueprint, transform).then(
-            carla.command.SetSimulatePhysics(carla.command.FutureActor, True)
+            carla.command.SetSimulatePhysics(carla.command.FutureActor, False)
         )
     ]
     response = client.apply_batch_sync(batch, True)[0]

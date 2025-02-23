@@ -13,12 +13,17 @@ class CarlaCosimPlugin(object):
     def __init__(
         self,
         cosim_controlled_actor_keys=[TERASIM_ACTOR_INFO],
-        control_cav=False,
+        control_cav=True,
     ):
         self.client = carla.Client("127.0.0.1", 2000)
         self.client.set_timeout(2.0)
 
         self.world = self.client.get_world()
+
+        self.traffic_lights = self.world.get_actors().filter("traffic.traffic_light")
+        for traffic_light in self.traffic_lights:
+            traffic_light.set_state(carla.TrafficLightState.Off)
+            traffic_light.freeze(True)
 
         self.control_cav = control_cav
         self.cosim_controlled_actor_keys = cosim_controlled_actor_keys
@@ -36,7 +41,7 @@ class CarlaCosimPlugin(object):
         }
 
         self.redis_client = create_redis_client(key_value_config=key_value_config)
-        self.sync_cosim_construction_zone_to_carla()
+        # self.sync_cosim_construction_zone_to_carla()
 
     def tick(self):
         if self.control_cav:
@@ -46,7 +51,6 @@ class CarlaCosimPlugin(object):
 
         self.sync_cosim_actor_to_carla()
         self.sync_cosim_tls_to_carla()
-        # self.sync_cosim_construction_zone_to_carla()
 
         self.world.tick()
 
@@ -153,8 +157,6 @@ class CarlaCosimPlugin(object):
                 #     life_time=0,
                 # )
 
-        # self.update_spectator_camera(transform)
-
     def sync_cosim_tls_to_carla(self):
         try:
             cosim_tls_info = self.redis_client.get(TLS_INFO)
@@ -163,25 +165,26 @@ class CarlaCosimPlugin(object):
             return
 
         if cosim_tls_info:
-            tls_data = cosim_tls_info.data
+            cosim_tls_data = cosim_tls_info.data
 
-            for node in tls_data:
-                node_tls = tls_data[node]
-                carla_light_ids = TLS_NODES[node]
+            for node in cosim_tls_data:
+                node_tls = cosim_tls_data[node]
+                carla_tls_node = TLS_NODES[node]
 
-                for i in range(len(carla_light_ids)):
-                    light_id = carla_light_ids[i]
+                for i in range(len(carla_tls_node)):
+                    light_ids = carla_tls_node[i]
 
-                    if light_id:
-                        light_actor = self.world.get_actor(carla_light_ids[i])
-                        light_state = node_tls.tls[i]
+                    if light_ids:
+                        for light_id in light_ids:
+                            light_actor = self.world.get_actor(light_id)
+                            light_state = node_tls.tls[i]
 
-                        if light_state == "G" or light_state == "g":
-                            light_actor.set_state(carla.TrafficLightState.Green)
-                        elif light_state == "Y" or light_state == "y":
-                            light_actor.set_state(carla.TrafficLightState.Yellow)
-                        elif light_state == "R" or light_state == "r":
-                            light_actor.set_state(carla.TrafficLightState.Red)
+                            if light_state == "G" or light_state == "g":
+                                light_actor.set_state(carla.TrafficLightState.Green)
+                            elif light_state == "Y" or light_state == "y":
+                                light_actor.set_state(carla.TrafficLightState.Yellow)
+                            elif light_state == "R" or light_state == "r":
+                                light_actor.set_state(carla.TrafficLightState.Red)
 
     def sync_cosim_actor_to_carla(self):
         """Update all actors in cosim to CARLA."""
@@ -308,8 +311,8 @@ class CarlaCosimPlugin(object):
             )
             vehicle.set_transform(transform)
 
-        if carla_id > 0:
-            vehicle = self.world.get_actor(carla_id)
+            # if carla_id > 0:
+            # vehicle = self.world.get_actor(carla_id)
             # control = carla.VehicleControl()
 
             # Simulate movement
