@@ -89,8 +89,8 @@ def create_motor_blueprint(world):
 
 def create_construction_zone_blueprint(world):
     blueprint_library = world.get_blueprint_library()
-    construction_zone_blueprint = blueprint_library.filter(
-        "static.prop.constructioncone"
+    construction_zone_blueprint = blueprint_library.find(
+        "static.prop.trafficcone01"
     )
     return construction_zone_blueprint
 
