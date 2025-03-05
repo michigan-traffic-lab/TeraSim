@@ -176,6 +176,7 @@ class TeraSimCoSimPlugin:
         orientation = sumo_heading_to_orientation(orientation)
 
         location = traci.vehicle.getPosition3D("CAV")
+        location = (location[0], location[1], location[2] if len(location) > 2 else 0.0)
 
         x = location[0] - UTM_OFFSET[0]
         y = location[1] - UTM_OFFSET[1]

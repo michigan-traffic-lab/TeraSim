@@ -16,6 +16,7 @@ license = {text = "MIT"}
 
 dependencies = [
     "pygame==2.6.1",
+    "carla==0.9.15",
     "opencv-python==4.10.0.84",
     "typing_extensions==4.12.2",
     "numpy==1.26.4",

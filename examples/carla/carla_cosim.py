@@ -116,8 +116,8 @@ class CarlaCosimPlugin(object):
             cav_info = cav_info.data["CAV"]
 
             x, y = utm_to_carla(cav_info.x, cav_info.y)
-            start_location = carla.Location(x, y, cav_info.z + 5)
-            end_location = carla.Location(x, y, cav_info.z - 5)
+            start_location = carla.Location(x, y, 500)
+            end_location = carla.Location(x, y, 0)
             yaw = -math.degrees(cav_info.orientation)
 
             vehicle_status, carla_id = get_actor_id_from_attribute(self.world, "CAV")
@@ -280,8 +280,8 @@ class CarlaCosimPlugin(object):
         cosim_id_record.add(id)
 
         x, y = utm_to_carla(veh_info.x, veh_info.y)
-        start_location = carla.Location(x, y, veh_info.z + 5)
-        end_location = carla.Location(x, y, veh_info.z - 5)
+        start_location = carla.Location(x, y, 500)
+        end_location = carla.Location(x, y, 0)
         yaw = -math.degrees(veh_info.orientation)
 
         vehicle_status, carla_id = get_actor_id_from_attribute(self.world, id)
@@ -324,8 +324,8 @@ class CarlaCosimPlugin(object):
         cosim_id_record.add(id)
 
         x, y = utm_to_carla(vru_info.x, vru_info.y)
-        start_location = carla.Location(x, y, vru_info.z + 5)
-        end_location = carla.Location(x, y, vru_info.z - 5)
+        start_location = carla.Location(x, y, 500)
+        end_location = carla.Location(x, y, 0)
         yaw = -math.degrees(vru_info.orientation)
 
         vru_status, carla_id = get_actor_id_from_attribute(self.world, id)
