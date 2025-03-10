@@ -1,7 +1,4 @@
-import time
 import redis
-
-from loguru import logger
 from terasim.overlay import traci
 
 from terasim_nde_nade.envs.safetest_nade_with_av import SafeTestNADEWithAV
@@ -30,26 +27,6 @@ class SafeTestNADEWithAVCosim(SafeTestNADEWithAV):
 
         print("Terasim Started!")
 
-    def on_step(self, ctx):
-        """The main step function for the environment"""
-
-        time_start = time.perf_counter()
-
-        continue_flag = self.user_step(traci)
-
-        time_observation = time.perf_counter()
-        logger.info(
-            f"Finished executing user step using {time_observation - time_start}s"
-        )
-
-        return continue_flag
-
-    def on_stop(self, ctx):
-        """Description: The stop function for the environment."""
-
-        super.on_stop(ctx)
-        print("Terasim Stopped!")
-
     def get_IS_prob(
         self,
         veh_id,
@@ -58,3 +35,16 @@ class SafeTestNADEWithAVCosim(SafeTestNADEWithAV):
         veh_ctx_dicts,
     ):
         return 0.0
+
+    def on_step(self, ctx):
+        """The main step function for the environment"""
+
+        continue_flag = self.user_step(traci)
+
+        return continue_flag
+
+    def on_stop(self, ctx):
+        """Description: The stop function for the environment."""
+
+        super.on_stop(ctx)
+        print("Terasim Stopped!")
