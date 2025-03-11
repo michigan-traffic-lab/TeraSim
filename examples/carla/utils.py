@@ -154,16 +154,31 @@ def get_z_offset(world, start_location, end_location, previous_state=None):
         # If previous_state is None, just return the minimum `z` value in raycast results.
         height = min((item.location.z for item in raycast_result), default=0)
     else:
-        # Find the height closest to previous_state.
-        height = min(
-            (
-                item.location.z
-                for item in raycast_result
-                if item.label == carla.CityObjectLabel.Roads
-            ),
-            default=raycast_result[0].location.z,
-            key=lambda z: abs(previous_state - z),
-        )
+        roads_sidewalks = [
+            item.location.z
+            for item in raycast_result
+            if item.label in (carla.CityObjectLabel.Roads, carla.CityObjectLabel.Sidewalks)
+        ]
+        ground_hits = [
+            item.location.z
+            for item in raycast_result
+            if item.label == carla.CityObjectLabel.Ground
+        ]
+
+        # First priority: roads/sidewalks if they exist
+        if roads_sidewalks:
+            height = min(roads_sidewalks, key=lambda z: abs(previous_state - z))
+        # If no roads/sidewalks found, check ground
+        elif ground_hits:
+            height = min(ground_hits, key=lambda z: abs(previous_state - z))
+        # If neither roads/sidewalks nor ground labels are present, use whatever we got
+        else:
+            # You might want to log or print out the labels if this case happens frequently
+            height = min(
+                (item.location.z for item in raycast_result), 
+                default=raycast_result[0].location.z,
+                key=lambda z: abs(previous_state - z)
+            )
     return height
 
 

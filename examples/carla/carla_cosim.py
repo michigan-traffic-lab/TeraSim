@@ -351,6 +351,8 @@ class CarlaCosimPlugin(object):
             z = get_z_offset(
                 self.world, start_location, end_location, current_transform.location.z
             )
+            if vru_info.type != "DEFAULT_BIKETYPE":
+                z += 1
             transform = carla.Transform(
                 carla.Location(x=x, y=y, z=z), carla.Rotation(yaw=yaw)
             )
