@@ -32,7 +32,7 @@ env = TeraSimEnvForUser(
 # Create the simulator
 sim = Simulator(
     sumo_net_file_path=maps_path / "mcity.net.xml",
-    sumo_config_file_path=maps_path / "mcity_pedestrain_example.sumocfg",
+    sumo_config_file_path=maps_path / "mcity_pedestrian_example.sumocfg",
     num_tries=10,
     gui_flag=True,
     realtime_flag=True,
