@@ -2,6 +2,8 @@
 
     <!-- <vType id="IDM_waymo_motion" length="5.00" width="1.85" minGap="3.28" maxSpeed="10.00" carFollowModel="IDM" accel="1.84" decel="4.00" tau="1.17" emergencyDecel="9.0" lcAccelLat="20000.0" latAlignment="center" lcSublane="1" lcSpeedGain="0" lcKeepRight="0" lcCooperative="0" /> -->
 
+    <vType id="NDE_URBAN" length="5.00" width="1.85" minGap="3.28" maxSpeed="10.00" carFollowModel="IDM" accel="1.84" decel="1.29" tau="1.17" emergencyDecel="7.06" lcSpeedGain="0" lcCooperative="0" lcKeepRight="1" speedFactor="normc(1,0.1,0.8,1.2)"/>
+    <vType id="NDE_HIGHWAY" length="5.00" width="1.85" minGap="5.92" maxSpeed="28.31" carFollowModel="IDM" accel="5.95" decel="5.96" tau="1.72" emergencyDecel="7.06" lcSpeedGain="0" lcCooperative="0" lcKeepRight="1" speedFactor="normc(1,0.1,0.8,1.2)"/>
     
     <route id="r_0" edges="EG_5_2_1 EG_5_2_11 EG_7_4_1 EG_7_4_2 EG_8_1_1 EG_9_1_1 EG_21_1_1 EG_21_1_5 EG_20_1_11" />
     <route id="r_1" edges="EG_22_1_1 EG_21_1_14 EG_21_1_18 EG_9_1_23 EG_17_23_1 EG_13_1_1 EG_7_1_1 EG_7_1_2 EG_5_1_1" />
