@@ -292,6 +292,7 @@ class SafeTestNADEWithAVCosim(SafeTestNADEWithAV):
 
     def __init__(
         self,
+        closed_lane_ids=None,
         user_step=None,
         *args,
         **kwargs,
@@ -299,6 +300,7 @@ class SafeTestNADEWithAVCosim(SafeTestNADEWithAV):
         """Initialize the environment (Please do not change)."""
         super().__init__(*args, **kwargs)
         self.user_step = user_step
+        self.closed_lane_ids = closed_lane_ids if closed_lane_ids else []
 
     def on_start(self, ctx):
         print("on start initializing agent controls")
@@ -623,7 +625,7 @@ class SafeTestNADEWithAVCosim(SafeTestNADEWithAV):
         ## TODO: 控制agent代码
         print("on_step control agent")
         self.ped_list = traci.person.getIDList()
-        self.closed_lane_ids = ["EG_1_1_1_0", "EG_24_1_1_0"]
+        # self.closed_lane_ids = ["EG_1_1_1_0", "EG_24_1_1_0"]
         # self.close_lane_ids = []
         # self.handle_departing_vehicles()
         self.reroute_vehicle(self.closed_lane_ids)

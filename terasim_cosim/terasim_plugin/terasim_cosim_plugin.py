@@ -31,6 +31,9 @@ class TeraSimCoSimPlugin:
         pub_channels=[],
         sub_channels=[],
         latency_src_channels=[],
+        closed_lane_ids=[],
+        closed_lane_pos=[],
+        closed_lane_shapes=[],
     ):
         self._routes = set()
 
@@ -50,6 +53,9 @@ class TeraSimCoSimPlugin:
 
         self.cosim_controlled_vehicle_keys = cosim_controlled_vehicle_keys
         self.cosim_controlled_pedestrian_keys = cosim_controlled_pedestrian_keys
+        self.closed_lane_ids = closed_lane_ids
+        self.closed_lane_pos = closed_lane_pos
+        self.closed_lane_shapes = closed_lane_shapes
 
     def on_start(self, simulator: Simulator, ctx):
         key_value_config = {
@@ -146,9 +152,9 @@ class TeraSimCoSimPlugin:
 
             return left_edge_points
 
-        closed_lane_ids = ["EG_1_1_1_0", "EG_24_1_1_0"]
-        closed_lane_pos = ["right", "right"]
-        closed_lane_shapes = []
+        closed_lane_ids = self.closed_lane_ids
+        closed_lane_pos = self.closed_lane_pos
+        closed_lane_shapes = self.closed_lane_shapes
         # perform offset correction
         for closed_lane_id, lane_pos in zip(closed_lane_ids, closed_lane_pos):
             shapes = traci.lane.getShape(closed_lane_id)
