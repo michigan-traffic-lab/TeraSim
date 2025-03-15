@@ -39,13 +39,12 @@ env = SafeTestNADEWithAVCosim(
     warmup_time_lb=args.warmup_time_lb,
     warmup_time_ub=args.warmup_time_ub,
     run_time=args.run_time,
-    closed_lane_ids=["EG_1_3_1.61_2"],
 )
 
 dir_path = Path(__file__).parent
 sim = Simulator(
     sumo_net_file_path=dir_path / "maps" / "mcity.net.xml",
-    sumo_config_file_path=dir_path / "maps" / "mcity.sumocfg",
+    sumo_config_file_path=dir_path / "maps" / "mcity_bike_example.sumocfg",
     num_tries=10,
     gui_flag=True,
     realtime_flag=True,
@@ -62,9 +61,6 @@ sim.add_plugin(
         pub_channels=[],  # Publish channels (mcityos remote only)
         sub_channels=[],  # Subscribe channels (mcityos remote only)
         latency_src_channels=[],  # Latency source channels (mcityos remote only)
-        closed_lane_ids=["EG_1_3_1.61_2"],
-        closed_lane_pos=["right"],
-        closed_lane_shapes=[]
     )
 )
 
