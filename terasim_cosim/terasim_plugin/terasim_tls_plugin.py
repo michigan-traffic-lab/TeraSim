@@ -27,7 +27,7 @@ class TeraSimTLSPlugin:
 
     def on_start(self, simulator: Simulator, ctx):
         key_value_config = {
-            COSIM_TLS_INFO: SUMOSignalDict,
+            TLS_INFO: SUMOSignalDict,
         }
 
         self.redis_client = create_redis_client(
@@ -56,7 +56,7 @@ class TeraSimTLSPlugin:
         simulator.stop_pipeline.hook("cosim_stop", self.on_stop, priority=-100)
 
     def sync_terasim_tls_to_cosim(self):
-        tls_info = self.get_all_tls_info()
+        sumo_tls = self.get_all_tls_info()
 
         nextTLS = traci.vehicle.getNextTLS("CAV")
         if nextTLS:
@@ -64,21 +64,21 @@ class TeraSimTLSPlugin:
         else:
             state, distance = "", 0.0
 
-        cosim_tls_info = SUMOSignalDict()
-        cosim_tls_info.header.timestamp = time.time()
-        cosim_tls_info.header.information = "TeraSim"
-        cosim_tls_info.av_next_tls = state
-        cosim_tls_info.av_next_dist = distance
+        tls_info = SUMOSignalDict()
+        tls_info.header.timestamp = time.time()
+        tls_info.header.information = "TeraSim"
+        tls_info.av_next_tls = state
+        tls_info.av_next_dist = distance
 
-        for tls_id in tls_info:
+        for tls_id in sumo_tls:
             signal = SUMOSignal()
-            signal.tls = tls_info[tls_id]
-            cosim_tls_info.data[tls_id] = signal
+            signal.tls = sumo_tls[tls_id]
+            tls_info.data[tls_id] = signal
 
-        self.redis_client.set(COSIM_TLS_INFO, cosim_tls_info)
+        self.redis_client.set(TLS_INFO, tls_info)
 
     def sync_cosim_tls_to_terasim(self):
-        cosim_controlled_tls_info = self.redis_client.get(COSIM_TLS_INFO)
+        cosim_controlled_tls_info = self.redis_client.get(TLS_INFO)
         if cosim_controlled_tls_info:
             data = cosim_controlled_tls_info.data
             for signal_id in data:

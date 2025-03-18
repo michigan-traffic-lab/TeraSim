@@ -6,7 +6,7 @@ from terasim_cosim.redis_client_wrapper import create_redis_client
 from terasim_cosim.redis_msgs import VehiclePlanning, VehicleControl
 
 
-UTM_OFFSET = [-277600 + 102.89, -4686800 + 281.25]
+UTM_OFFSET = [-277600 + 102.89, -4686800 + 281.25, 0.0]
 
 
 def utm_to_sumo_coordinate(x, y):

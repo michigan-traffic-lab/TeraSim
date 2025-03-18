@@ -4,20 +4,18 @@ ENVIRONMENT_VARIABLE_PORT = "TERASIM_REDIS_PORT"
 ENVIRONMENT_VARIABLE_PASSWORD = "TERASIM_REDIS_PASSWORD"
 
 # Redis channels or keys
-CAV_COSIM_VEHICLE_INFO = "cav_cosim_vehicle_info"
-TERASIM_COSIM_VEHICLE_INFO = "terasim_cosim_vehicle_info"
-COSIM_TLS_INFO = "cosim_tls_info"
+CAV_INFO = "cav_info"
+TLS_INFO = "tls_info"
 
-TERASIM_LATENCY = "terasim_latency"
+TERASIM_ACTOR_INFO = "terasim_actor_info"
+CONSTRUCTION_ZONE_INFO = "construction_zone_info"
 
-VEHICLE_CONTROL = "/mcity/vehicle_control"
-VEHICLE_STATE = "/mcity/vehicle_state"
-VEHICLE_PLANNING = "/mcity/vehicle_planning"
+LATENCY = "terasim/latency"
+FLAG = "terasim/flag"
 
-CAMERA_RGB = "/camera/image_color/compressed"
-CAMERA_SPECTATOR = "/camera/spectator/compressed"
-
-FLAG = "/mcity/flag"
+VEHICLE_CONTROL = "terasim/vehicle_control"
+VEHICLE_STATE = "terasim/vehicle_state"
+VEHICLE_PLANNING = "terasim/vehicle_planning"
 
 UPDATE_RATE_SET = 20
 UPDATE_RATE_GET = 50

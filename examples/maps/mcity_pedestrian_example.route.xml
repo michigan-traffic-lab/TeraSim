@@ -1,0 +1,51 @@
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
+
+    <vType id="NDE_URBAN" length="5.00" width="1.85" minGap="3.28" maxSpeed="10.00" carFollowModel="IDM" accel="1.84" decel="1.29" tau="1.17" emergencyDecel="7.06" lcSpeedGain="0" lcCooperative="0" lcKeepRight="1" speedFactor="normc(1,0.1,0.8,1.2)"/>
+    <vType id="NDE_HIGHWAY" length="5.00" width="1.85" minGap="5.92" maxSpeed="28.31" carFollowModel="IDM" accel="5.95" decel="5.96" tau="1.72" emergencyDecel="7.06" lcSpeedGain="0" lcCooperative="0" lcKeepRight="1" speedFactor="normc(1,0.1,0.8,1.2)"/>
+
+    <route id="cav_route" edges="EG_35_1_14 EG_1_3_1 EG_1_3_1.61 EG_1_3_1.136 EG_34_1_24 EG_34_1_3 gneE0 EG_4_1_1 EG_10_1_1 EG_15_1_17 EG_15_1_1 EG_16_45_1 EG_16_23_1 EG_17_1_1 EG_14_2_1 EG_9_1_1 EG_21_1_1 EG_21_1_5 EG_20_1_11 EG_29_1_1 EG_35_1_14" />
+
+    <personFlow id="VRU_0" begin="0.00" end="3600.00" personsPerHour="37">
+        <walk edges="EG_5_2_1 EG_5_2_11 EG_7_4_1 EG_7_4_2 EG_8_1_1 EG_9_1_1 EG_21_1_1 EG_21_1_5 EG_20_1_11"/>
+    </personFlow>
+    <personFlow id="VRU_1" begin="0.00" end="3600.00" personsPerHour="67">
+        <walk edges="EG_22_1_1 EG_21_1_14 EG_21_1_18 EG_9_1_23 EG_17_23_1 EG_13_1_1 EG_7_1_1 EG_7_1_2 EG_5_1_1"/>
+    </personFlow>
+    <personFlow id="VRU_10" begin="0.00" end="3600.00" personsPerHour="96">
+        <walk edges="EG_5_2_1 EG_5_2_11 EG_11_1_1 EG_16_1_5 EG_15_1_8 EG_15_1_10 EG_15_1_17 EG_23_1_1"/>
+    </personFlow>
+    <personFlow id="VRU_11" begin="0.00" end="3600.00" personsPerHour="47">
+        <walk edges="EG_23_2_1 EG_15_1_1 EG_15_1_2 EG_15_1_8 gneE2 EG_10_2_1 EG_4_1_20 EG_7_4_1 gneE8 EG_7_3_1 EG_6_3_1"/>
+    </personFlow>
+    <personFlow id="VRU_12" begin="0.00" end="3600.00" personsPerHour="74">
+        <walk edges="EG_27_2_1 gneE6 EG_27_3_1 EG_16_1_1 EG_11_2_1 EG_5_1_1"/>
+    </personFlow>
+    <personFlow id="VRU_13" begin="0.00" end="3600.00" personsPerHour="54">
+        <walk edges="EG_25_2_1 EG_25_2_7 EG_28_2_1 EG_14_2_1 EG_8_3_1 EG_8_23_12 EG_7_1_1 EG_7_1_2 EG_4_2_1 EG_4_2_3 EG_4_2_5 EG_34_1_16 EG_1_1_1"/>
+    </personFlow>
+    <personFlow id="VRU_14" begin="0.00" end="3600.00" personsPerHour="60">
+        <walk edges="EG_1_3_1 EG_1_3_1.61 EG_1_3_1.136 EG_34_1_24 EG_34_1_3 gneE0 EG_4_1_1 EG_10_1_1 EG_15_1_17 EG_15_1_1 EG_16_45_1 EG_16_23_1 EG_13_1_1 EG_6_4_1"/>
+    </personFlow>
+    <personFlow id="VRU_15" begin="0.00" end="3600.00" personsPerHour="73">
+        <walk edges="EG_24_1_1 EG_25_1_1 EG_29_1_1"/>
+    </personFlow>
+    <personFlow id="VRU_16" begin="0.00" end="3600.00" personsPerHour="45">
+        <walk edges="EG_22_1_1 EG_21_1_14 EG_21_1_18 EG_9_1_23 EG_28_1_1 EG_24_2_1"/>
+    </personFlow>
+    <personFlow id="VRU_17" begin="0.00" end="3600.00" personsPerHour="279">
+        <walk edges="EG_1_3_1 EG_1_3_1.61 EG_1_3_1.136 EG_34_1_24 EG_34_1_3 EG_34_1_6 EG_34_1_16 EG_1_1_1"/>
+    </personFlow>
+    <personFlow id="VRU_18" begin="0.00" end="3600.00" personsPerHour="94">
+        <walk edges="EG_22_1_1 EG_21_1_14 EG_18_1_1 EG_18_12_171 EG_14_1_1 EG_28_1_1 EG_25_1_1"/>
+    </personFlow>
+    <personFlow id="VRU_19" begin="0.00" end="3600.00" personsPerHour="23">
+        <walk edges="EG_23_2_1 EG_15_1_1 EG_16_45_1 EG_16_23_1 EG_17_1_1 EG_19_1_1 EG_21_1_5 EG_20_1_11"/>
+    </personFlow>
+    <personFlow id="VRU_20" begin="0.00" end="3600.00" personsPerHour="133">
+        <walk edges="EG_22_1_1 EG_21_1_14 EG_21_1_18 EG_21_1_1 EG_19_1_10 EG_25_2_7 EG_24_2_1"/>
+    </personFlow>
+    <personFlow id="VRU_21" begin="0.00" end="3600.00" personsPerHour="279">
+        <walk edges="EG_1_3_1 EG_1_3_1.61 EG_1_3_1.136 EG_34_1_24 EG_34_1_3 EG_34_1_6 EG_34_1_16 EG_1_1_1"/>
+    </personFlow>
+
+</routes>

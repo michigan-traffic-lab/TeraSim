@@ -260,7 +260,7 @@ class TeraSimRedisClientGeneral:
             latency_msg.header.timestamp = time.time()
             latency_msg.data = str(latency)
             latency_msg_str = latency_msg.model_dump_json()
-            self.local_client.set(constants.TERASIM_LATENCY, latency_msg_str)
+            self.local_client.set(constants.LATENCY, latency_msg_str)
 
     def helper_choose_client(self, mode: str) -> redis.Redis:
         """Helper function to choose the Redis client based on the mode.
