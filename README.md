@@ -59,9 +59,9 @@ TeraSim can also operate independently. If CARLA co-simulation is not utilized, 
 
 The TeraSim Core is integrated into this repository and will be installed automatically. For more details, please refer to the [TeraSim Core repository](https://github.com/michigan-traffic-lab/TeraSim).
 
-To start TeraSim, navigate to the example directory.
+To run TeraSim, navigate to the terasim example directory.
 ```
-cd examples
+cd examples/terasim_examples
 ```
 
 TeraSim offers two modes for controlling background vehicles (BVs):
@@ -96,11 +96,15 @@ If Carla co-simulation is used, users should send control commands directly to C
 
 Follow the instructions to set up and run [Mcity Digital Twin](https://github.com/mcity/mcity-digital-twin) in the CARLA simulator.
 
+To run cosim, navigate to the carla example directory.
+```
+cd examples/carla_examples
+```
+
 #### Run the AV Stack
 
 Launch the AV stack to spawn an AV that supports both manual and autonomous control:
 ```
-cd examples
 python3 carla_av_stack.py
 ```
 
@@ -117,14 +121,12 @@ python3 carla_av_stack.py
 Run the CARLA co-simulation script to synchronize the AV and BVs.
 
 ```
-cd examples
 python3 carla_cosim.py
 ```
 
 #### Run AV sensors (optional)
 For users needing to simulate perception data, we provide a template to generate LiDAR and varying camera images from CARLA and convert them to ROS2 format. To utilize this feature, users must install [ROS2](https://docs.ros.org/en/humble/index.html) and have a basic understanding of its framework. Detailed comments are included in the file to assist with setup and usage. The script can be executed using the following command:
 ```
-cd examples
 python3 carla_sensor_ros2.py
 ```
 
