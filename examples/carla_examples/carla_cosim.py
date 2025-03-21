@@ -5,7 +5,13 @@ import carla
 import random
 from terasim_cosim.constants import *
 from terasim_cosim.redis_client_wrapper import create_redis_client
-from terasim_cosim.redis_msgs import Actor, ActorDict, ConstructionZone, SUMOSignalDict
+from terasim_cosim.redis_msgs import (
+    Actor,
+    ActorDict,
+    ConstructionZone,
+    SUMOSignalDict,
+    VehicleState,
+)
 from utils import *
 
 
@@ -35,6 +41,7 @@ class CarlaCosimPlugin(object):
 
         key_value_config = {
             CAV_INFO: ActorDict,
+            VEHICLE_STATE: VehicleState,
             TERASIM_ACTOR_INFO: ActorDict,
             CONSTRUCTION_ZONE_INFO: ConstructionZone,
             TLS_INFO: SUMOSignalDict,
@@ -102,8 +109,18 @@ class CarlaCosimPlugin(object):
             orientation=math.radians(-transform.rotation.yaw),
             speed_long=speed,
         )
-
         self.redis_client.set(CAV_INFO, cav_info)
+
+        vehicle_state = VehicleState()
+        vehicle_state.header.timestamp = time.time()
+
+        control = CAV.get_control()
+        vehicle_state.brake_cmd = control.brake
+        vehicle_state.throttle_cmd = control.throttle
+        vehicle_state.steer_cmd = control.steer
+        vehicle_state.gear_pos = 4
+
+        self.redis_client.set(VEHICLE_STATE, vehicle_state)
 
     def sync_cosim_cav_to_carla(self):
         try:
@@ -220,8 +237,7 @@ class CarlaCosimPlugin(object):
             for i in range(len(points) - 1):
                 p1 = points[i]
                 p2 = points[i + 1]
-                # p1 = utm_to_carla(points[i][0], points[i][1])
-                # p2 = utm_to_carla(points[i + 1][0], points[i + 1][1])
+
                 refined_points.append(p1)  # Add the current transformed point
 
                 # Calculate the 2D distance between transformed points (x, y only)
@@ -311,14 +327,6 @@ class CarlaCosimPlugin(object):
             )
             vehicle.set_transform(transform)
 
-            # if carla_id > 0:
-            # vehicle = self.world.get_actor(carla_id)
-            # control = carla.VehicleControl()
-
-            # Simulate movement
-            # vehicle.apply_control(control)
-            # pass
-
     def _process_pedestrian(self, id, vru_info, cosim_id_record):
         """Process a pedestrian actor."""
         cosim_id_record.add(id)
@@ -344,8 +352,6 @@ class CarlaCosimPlugin(object):
             carla_id = spawn_actor(self.client, blueprint, transform)
             print(f"Spawned pedestrian in CARLA: {id}, ID: {carla_id}")
         else:
-            # if vru_info.type != "DEFAULT_BIKETYPE":
-            # transform.location.z += 1.0
             pedestrian = self.world.get_actor(carla_id)
             current_transform = pedestrian.get_transform()
             z = get_z_offset(
