@@ -1,6 +1,7 @@
 from terasim.overlay import traci
 from loguru import logger
 import random
+import os
 import terasim.utils as utils
 from terasim_nde_nade.envs.safetest_nade_with_av import SafeTestNADEWithAV
 import math
@@ -308,10 +309,11 @@ class SafeTestNADEWithAVCosim(SafeTestNADEWithAV):
         #     "/media/mtl/2TB/syh_dev/Mcity-2.0-API-for-AV-motion-planning-main/examples/maps/Mcity_safetest/mcity_disallow_ped_adjusted_test.net.xml",
         #     withInternal=True,
         # )  ## TODO: Fix this
-        self.sumonet_for_construction_zone: Net = readNet(
-            "/media/mtl/2TB/syh_dev/Mcity-2.0-API-for-AV-motion-planning-main/examples/maps/Mcity_safetest/mcity.net.xml",
-            withInternal=True,
-        )
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        net_path = os.path.join(current_dir, '..', 'maps', 'Mcity_safetest', 'mcity.net.xml')
+        net_path = os.path.normpath(net_path)
+    
+
         self.rerouted_vehicles = set()
         self.no_need_reroute_vehicles = set()
         self.person_information: dict[str, dict] = {}
