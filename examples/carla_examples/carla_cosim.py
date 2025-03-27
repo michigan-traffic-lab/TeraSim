@@ -163,9 +163,9 @@ class CarlaCosimPlugin(object):
                     carla.Location(x=x, y=y, z=z), carla.Rotation(yaw=yaw)
                 )
                 CAV.set_transform(transform)
-                draw_text(
-                    self.world, transform.location + carla.Location(z=2.5), "MCITY-CAV"
-                )
+                # draw_text(
+                #    self.world, transform.location + carla.Location(z=2.5), "MCITY-CAV"
+                # )
                 # draw_point(
                 #     self.world,
                 #     size=0.05,
