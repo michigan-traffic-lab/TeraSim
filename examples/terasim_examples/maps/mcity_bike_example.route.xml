@@ -4,6 +4,7 @@
 
     <vType id="NDE_URBAN" length="5.00" width="1.85" minGap="3.28" maxSpeed="10.00" carFollowModel="IDM" accel="1.84" decel="1.29" tau="1.17" emergencyDecel="7.06" lcSpeedGain="0" lcCooperative="0" lcKeepRight="1" speedFactor="normc(1,0.1,0.8,1.2)"/>
     <vType id="NDE_HIGHWAY" length="5.00" width="1.85" minGap="5.92" maxSpeed="28.31" carFollowModel="IDM" accel="5.95" decel="5.96" tau="1.72" emergencyDecel="7.06" lcSpeedGain="0" lcCooperative="0" lcKeepRight="1" speedFactor="normc(1,0.1,0.8,1.2)"/>
+    <vType id="DEFAULT_BIKETYPE" vClass="bicycle" length="4" width="2"/>
     
     <route id="r_0" edges="EG_5_2_1 EG_5_2_11 EG_7_4_1 EG_7_4_2 EG_8_1_1 EG_9_1_1 EG_21_1_1 EG_21_1_5 EG_20_1_11" />
     <route id="r_1" edges="EG_22_1_1 EG_21_1_14 EG_21_1_18 EG_9_1_23 EG_17_23_1 EG_13_1_1 EG_7_1_1 EG_7_1_2 EG_5_1_1" />
@@ -46,13 +47,13 @@
         <walk edges="EG_27_2_1 gneE6 EG_27_3_1 EG_16_1_1 EG_11_2_1 EG_5_1_1"/>
     </personFlow>
 
-    <flow id="BV_13" type="DEFAULT_BIKETYPE" begin="0.00" departLane="best" route="r_13" vehsPerHour="54" />
+    <flow id="BV_13" type="DEFAULT_BIKETYPE" begin="0.00" departLane="best" route="r_13" vehsPerHour="54"/>
     
     <personFlow id="VRU_14" type="DEFAULT_BIKETYPE" begin="0.00" end="3600.00" personsPerHour="60">
         <walk edges="EG_1_3_1 EG_1_3_1.61 EG_1_3_1.136 EG_34_1_24 EG_34_1_3 gneE0 EG_4_1_1 EG_10_1_1 EG_15_1_17 EG_15_1_1 EG_16_45_1 EG_16_23_1 EG_13_1_1 EG_6_4_1"/>
     </personFlow>
 
-    <flow id="BV_15" type="DEFAULT_BIKETYPE" begin="0.00" departLane="best" route="r_15" vehsPerHour="73" />
+    <flow id="BV_15" type="DEFAULT_BIKETYPE" begin="0.00" departLane="best" route="r_15" vehsPerHour="73"/>
 
     <personFlow id="VRU_16" type="DEFAULT_BIKETYPE" begin="0.00" end="3600.00" personsPerHour="45">
         <walk edges="EG_22_1_1 EG_21_1_14 EG_21_1_18 EG_9_1_23 EG_28_1_1 EG_24_2_1"/>
@@ -62,21 +63,21 @@
         <walk edges="EG_1_3_1 EG_1_3_1.61 EG_1_3_1.136 EG_34_1_24 EG_34_1_3 EG_34_1_6 EG_34_1_16 EG_1_1_1"/>
     </personFlow>
 
-    <flow id="BV_18" type="DEFAULT_BIKETYPE" begin="0.00" departLane="best" route="r_18" vehsPerHour="94" />
+    <flow id="BV_18" type="DEFAULT_BIKETYPE" begin="0.00" departLane="best" route="r_18" vehsPerHour="94"/>
     
-    <flow id="BV_19" type="DEFAULT_BIKETYPE" begin="0.00" departLane="best" route="r_19" vehsPerHour="23" />
+    <flow id="BV_19" type="DEFAULT_BIKETYPE" begin="0.00" departLane="best" route="r_19" vehsPerHour="23"/>
 
     <personFlow id="VRU_20" type="DEFAULT_BIKETYPE" begin="0.00" end="3600.00" personsPerHour="133">
         <walk edges="EG_22_1_1 EG_21_1_14 EG_21_1_18 EG_21_1_1 EG_19_1_10 EG_25_2_7 EG_24_2_1"/>
     </personFlow>
 
-    <flow id="BV_3" type="DEFAULT_BIKETYPE" begin="0.00" departLane="best" route="r_3" vehsPerHour="79" />
+    <flow id="BV_3" type="DEFAULT_BIKETYPE" begin="0.00" departLane="best" route="r_3" vehsPerHour="79"/>
 
     <personFlow id="VRU_5" type="DEFAULT_BIKETYPE" begin="0.00" end="3600.00" personsPerHour="64">
         <walk edges="EG_6_2_1 EG_8_1_1 EG_14_1_1 EG_17_23_1 EG_26_12_1"/>
     </personFlow>
 
-    <flow id="BV_6" type="DEFAULT_BIKETYPE" begin="0.00" departLane="best" route="r_6" vehsPerHour="68" />
+    <flow id="BV_6" type="DEFAULT_BIKETYPE" begin="0.00" departLane="best" route="r_6" vehsPerHour="68"/>
 
     <personFlow id="VRU_8" type="DEFAULT_BIKETYPE" begin="0.00" end="3600.00" personsPerHour="230">
         <walk edges="EG_1_3_1 EG_1_3_1.61 EG_1_3_1.136 EG_34_1_24 EG_34_1_3 gneE0 EG_4_1_1 EG_10_1_1 EG_15_1_17 EG_23_1_1"/>
