@@ -58,7 +58,9 @@ class JayWalkingPerson(ExternalPerson):
         self.angle: float = None
         self.sumonet: Net = sumonet
         self.edge: str = traci.person.getRoadID(id)
-        self.total_width: float = sum([lane.getWidth() for lane in sumonet.getEdge(self.edge).getLanes()])
+        self.total_width: float = sum(
+            [lane.getWidth() for lane in sumonet.getEdge(self.edge).getLanes()]
+        )
         self.curr_distance: float = 0
 
     @staticmethod
@@ -131,7 +133,9 @@ class JayWalkingPerson(ExternalPerson):
         #     print("turn right")
 
     def execute(self):
-        self.curr_distance += force_person_move_forward(self.id, mode=0b110, angle=self.angle)
+        self.curr_distance += force_person_move_forward(
+            self.id, mode=0b110, angle=self.angle
+        )
 
     def until(self):
         """当行人走出一开始的边时，结束"""
@@ -173,58 +177,61 @@ class AlteratingRidingBike(ExternalPerson):
         super().__init__(id)
         self.turn_angle = 15
         self.curr_angle = None
-        self.step_number = None  
+        self.step_number = None
 
     @staticmethod
     def satisfy(p_id, sumonet: Net) -> bool:
         """
         1在车行道上行驶
         2不能太靠近当前边的终点"""
-        
+
         edge_id = traci.person.getRoadID(p_id)
         is_edge_special = sumonet.getEdge(edge_id).isSpecial()
         if is_edge_special:
             return False
-        
+
         lane_id = traci.person.getLaneID(p_id)
         allowed: list[str] = traci.lane.getAllowed(lane_id)
         if "bicycle" not in allowed:
             return False
         if allowed == ["bicycle"]:
             return False
-        
+
         lane_length = traci.lane.getLength(lane_id)
         lane_position = traci.person.getLanePosition(p_id)
         if (lane_length - lane_position) < 60:
             return False
-        
+
         return True
-    
+
     def on_begin(self) -> None:
         lane_id = traci.person.getLaneID(self.id)
         lane_width = traci.lane.getWidth(lane_id)
         theta = math.radians(self.turn_angle)
         distance = lane_width / math.sin(theta)
-        self.step_number = math.floor( distance / traci.person.getMaxSpeed(self.id) / traci.simulation.getDeltaT() )
+        self.step_number = math.floor(
+            distance / traci.person.getMaxSpeed(self.id) / traci.simulation.getDeltaT()
+        )
 
     def execute(self) -> None:
         """开始时：让它左偏一定度数，然后直走；直走固定距离后，往右偏，再走固定步数；最后角度回归"""
         if self.current_step == 0:
             self.curr_angle = (traci.person.getAngle(self.id) - self.turn_angle) % 360
         if self.current_step == self.step_number:
-            self.curr_angle = (traci.person.getAngle(self.id) + 2 * self.turn_angle) % 360
+            self.curr_angle = (
+                traci.person.getAngle(self.id) + 2 * self.turn_angle
+            ) % 360
         elif self.current_step == 2 * self.step_number - 1:
             self.curr_angle = (traci.person.getAngle(self.id) + self.turn_angle) % 360
 
         force_person_move_forward(self.id, angle=self.curr_angle, mode=0b110)
-            
-    
+
     def until(self) -> bool:
         return self.current_step == 2 * self.step_number
-    
+
     def on_end(self) -> None:
         pass
-        
+
 
 class RunRedLightPerson(ExternalPerson):
 
@@ -249,11 +256,15 @@ class RunRedLightPerson(ExternalPerson):
                 if traci.person.getVehicleClass(p_id) == "pedestrian":
                     return True
                 elif traci.person.getVehicleClass(p_id) == "bicycle":
-                    if traci.lane.getLength(lane_id) - traci.person.getLanePosition(p_id) < 3:
+                    if (
+                        traci.lane.getLength(lane_id)
+                        - traci.person.getLanePosition(p_id)
+                        < 3
+                    ):
                         return True
-                
+
         return False
-    
+
     def on_begin(self):
         pass
 
@@ -262,10 +273,10 @@ class RunRedLightPerson(ExternalPerson):
 
     def until(self) -> bool:
         return traci.person.getLaneID(self.id) != self.lane
-    
+
     def on_end(self) -> None:
         pass
-    
+
 
 def force_person_move_forward(id, mode=0b110, speed=None, angle=None) -> float:
     """强制行人向特定方向以特定速度移动
@@ -285,9 +296,18 @@ def force_person_move_forward(id, mode=0b110, speed=None, angle=None) -> float:
         current_pos[1] + distance * math.cos(radians),
     )
 
-    traci.person.moveToXY(id,edgeID="",x=new_pos[0],y=new_pos[1],angle=angle,keepRoute=mode,matchThreshold=20)
+    traci.person.moveToXY(
+        id,
+        edgeID="",
+        x=new_pos[0],
+        y=new_pos[1],
+        angle=angle,
+        keepRoute=mode,
+        matchThreshold=20,
+    )
 
-    return math.dist(current_pos,new_pos)
+    return math.dist(current_pos, new_pos)
+
 
 class SafeTestNADEWithAVCosim(SafeTestNADEWithAV):
 
@@ -310,9 +330,12 @@ class SafeTestNADEWithAVCosim(SafeTestNADEWithAV):
         #     withInternal=True,
         # )  ## TODO: Fix this
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        net_path = os.path.join(current_dir, '..', 'maps', 'mcity.net.xml')
+        net_path = os.path.join(current_dir, "..", "maps", "mcity.net.xml")
         net_path = os.path.normpath(net_path)
-        self.sumonet_for_construction_zone: Net = readNet(net_path, withInternal=True,)
+        self.sumonet_for_construction_zone: Net = readNet(
+            net_path,
+            withInternal=True,
+        )
 
         self.rerouted_vehicles = set()
         self.no_need_reroute_vehicles = set()
@@ -407,7 +430,7 @@ class SafeTestNADEWithAVCosim(SafeTestNADEWithAV):
         closed_edges = [closed_lane.rsplit("_", 1)[0] for closed_lane in closed_lanes]
         # Determine the intersection between the vehicle's route and the closed edges.
         intersect_edges = set(closed_edges) & set(edge_ids)
-        
+
         # If there is an intersection, check each affected edge.
         if intersect_edges:
             for edge in intersect_edges:
@@ -415,22 +438,23 @@ class SafeTestNADEWithAVCosim(SafeTestNADEWithAV):
                 edge_obj = self.sumonet_for_construction_zone.getEdge(edge)
                 lanes = edge_obj.getLanes()  # List of lane objects for this edge.
                 all_lanes_closed = True
-                
+
                 # Check each lane of the edge to see if at least one lane is still open.
                 for lane_index in range(len(lanes)):
                     lane_id = f"{edge}_{lane_index}"
                     if lane_id not in closed_lanes:
                         all_lanes_closed = False
                         break  # No need to check further lanes for this edge.
-                
+
                 # If one of the edges in the vehicle's route is completely closed, reroute is necessary.
                 if all_lanes_closed:
                     return True
-        
+
         # If there is no intersection or every intersecting edge has at least one open lane,
         # then the route does not need to be changed.
         self.no_need_reroute_vehicles.add(vehicle_id)
         return False
+
     # def handle_departing_vehicles(self):
     #     # Get vehicles that are scheduled to be added this step
     #     closed_edges = [closed_lane.rsplit("_", 1)[0] for closed_lane in self.closed_lane_ids]
@@ -529,7 +553,7 @@ class SafeTestNADEWithAVCosim(SafeTestNADEWithAV):
     def reroute_vehicle(self, closed_lanes):
         # Determine the closed edges by stripping the lane index from each closed lane id.
         closed_edges = [closed_lane.rsplit("_", 1)[0] for closed_lane in closed_lanes]
-        
+
         for veh_id in traci.vehicle.getIDList():
             if veh_id == "CAV":
                 None
@@ -565,7 +589,7 @@ class SafeTestNADEWithAVCosim(SafeTestNADEWithAV):
                     continue
                 except Exception as e:
                     logger.error(f"Vehicle {veh_id} failed lane change: {e}")
-            
+
             # Otherwise, compute a new route from the current (possibly open) edge to the destination.
             destination_edge = current_route[-1]
             new_route = traci.simulation.findRoute(current_edge, destination_edge)
@@ -574,9 +598,13 @@ class SafeTestNADEWithAVCosim(SafeTestNADEWithAV):
             if new_route and new_route != current_route:
                 traci.vehicle.setRoute(veh_id, new_route)
                 self.rerouted_vehicles.add(veh_id)
-                logger.info(f"Vehicle {veh_id} rerouted from {current_route} to {new_route}")
+                logger.info(
+                    f"Vehicle {veh_id} rerouted from {current_route} to {new_route}"
+                )
             else:
-                logger.warning(f"Vehicle {veh_id} could not be rerouted; no alternative route found")
+                logger.warning(
+                    f"Vehicle {veh_id} could not be rerouted; no alternative route found"
+                )
 
     def vru_control(self):
 
@@ -649,7 +677,6 @@ class SafeTestNADEWithAVCosim(SafeTestNADEWithAV):
 
     def on_step(self, ctx):
         ## TODO: 控制agent代码
-        print("on_step control agent")
         self.ped_list = traci.person.getIDList()
         # self.closed_lane_ids = ["EG_1_1_1_0", "EG_24_1_1_0"]
         # self.close_lane_ids = []

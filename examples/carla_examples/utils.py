@@ -128,6 +128,7 @@ def destroy_all_actors(world):
         list(world.get_actors().filter("vehicle.*"))
         + list(world.get_actors().filter("walker.pedestrian.*"))
         + list(world.get_actors().filter("static.prop.constructioncone"))
+        + list(world.get_actors().filter("static.prop.trafficcone01"))
     )
 
     for actor in carla_actors:
@@ -157,7 +158,8 @@ def get_z_offset(world, start_location, end_location, previous_state=None):
         roads_sidewalks = [
             item.location.z
             for item in raycast_result
-            if item.label in (carla.CityObjectLabel.Roads, carla.CityObjectLabel.Sidewalks)
+            if item.label
+            in (carla.CityObjectLabel.Roads, carla.CityObjectLabel.Sidewalks)
         ]
         ground_hits = [
             item.location.z
@@ -175,9 +177,9 @@ def get_z_offset(world, start_location, end_location, previous_state=None):
         else:
             # You might want to log or print out the labels if this case happens frequently
             height = min(
-                (item.location.z for item in raycast_result), 
+                (item.location.z for item in raycast_result),
                 default=raycast_result[0].location.z,
-                key=lambda z: abs(previous_state - z)
+                key=lambda z: abs(previous_state - z),
             )
     return height
 
