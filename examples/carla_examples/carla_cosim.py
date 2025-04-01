@@ -48,7 +48,7 @@ class CarlaCosimPlugin(object):
         }
 
         self.redis_client = create_redis_client(key_value_config=key_value_config)
-        # self.sync_cosim_construction_zone_to_carla()
+        self.sync_cosim_construction_zone_to_carla()
 
     def tick(self):
         if self.control_cav:

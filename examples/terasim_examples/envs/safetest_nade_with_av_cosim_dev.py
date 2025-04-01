@@ -310,9 +310,9 @@ class SafeTestNADEWithAVCosim(SafeTestNADEWithAV):
         #     withInternal=True,
         # )  ## TODO: Fix this
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        net_path = os.path.join(current_dir, '..', 'maps', 'Mcity_safetest', 'mcity.net.xml')
+        net_path = os.path.join(current_dir, '..', 'maps', 'mcity.net.xml')
         net_path = os.path.normpath(net_path)
-    
+        self.sumonet_for_construction_zone: Net = readNet(net_path, withInternal=True,)
 
         self.rerouted_vehicles = set()
         self.no_need_reroute_vehicles = set()

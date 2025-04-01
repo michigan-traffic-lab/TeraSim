@@ -4,6 +4,7 @@ import time
 import sumolib
 import lxml.etree as ET
 import numpy as np
+import copy
 
 from terasim.overlay import traci
 from terasim.simulator import Simulator
@@ -154,7 +155,7 @@ class TeraSimCoSimPlugin:
 
         closed_lane_ids = self.closed_lane_ids
         closed_lane_pos = self.closed_lane_pos
-        closed_lane_shapes = self.closed_lane_shapes
+        closed_lane_shapes = copy.deepcopy(self.closed_lane_shapes)
         # perform offset correction
         for closed_lane_id, lane_pos in zip(closed_lane_ids, closed_lane_pos):
             shapes = traci.lane.getShape(closed_lane_id)
