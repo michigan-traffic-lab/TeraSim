@@ -401,12 +401,34 @@ class SafeTestNADEWithAVCosim(SafeTestNADEWithAV):
         return [edge.getID() for edge in route[0]]
 
     def neccessary_reroute(self, vehicle_id, closed_lanes):
+        # Retrieve the current route (list of edge IDs) for the vehicle.
         edge_ids = traci.vehicle.getRoute(vehicle_id)
+        # Derive closed edges from the closed lane identifiers.
         closed_edges = [closed_lane.rsplit("_", 1)[0] for closed_lane in closed_lanes]
-        if set(closed_edges) & set(
-            edge_ids
-        ):  # Intersection of closed_edges and edge_ids
-            return True
+        # Determine the intersection between the vehicle's route and the closed edges.
+        intersect_edges = set(closed_edges) & set(edge_ids)
+        
+        # If there is an intersection, check each affected edge.
+        if intersect_edges:
+            for edge in intersect_edges:
+                # Retrieve the edge object. This assumes you have a method to get the edge details.
+                edge_obj = self.sumonet_for_construction_zone.getEdge(edge)
+                lanes = edge_obj.getLanes()  # List of lane objects for this edge.
+                all_lanes_closed = True
+                
+                # Check each lane of the edge to see if at least one lane is still open.
+                for lane_index in range(len(lanes)):
+                    lane_id = f"{edge}_{lane_index}"
+                    if lane_id not in closed_lanes:
+                        all_lanes_closed = False
+                        break  # No need to check further lanes for this edge.
+                
+                # If one of the edges in the vehicle's route is completely closed, reroute is necessary.
+                if all_lanes_closed:
+                    return True
+        
+        # If there is no intersection or every intersecting edge has at least one open lane,
+        # then the route does not need to be changed.
         self.no_need_reroute_vehicles.add(vehicle_id)
         return False
     # def handle_departing_vehicles(self):
@@ -425,134 +447,136 @@ class SafeTestNADEWithAVCosim(SafeTestNADEWithAV):
     #                 print(f"Vehicle {veh_id} rerouted pre-spawn from {departure_edge} to avoid closed lane.")
     #             except Exception as e:
     #                 print(f"Failed to reroute vehicle {veh_id}: {e}")
-    def reroute_vehicle(self, closed_lanes):
+    # def reroute_vehicle(self, closed_lanes):
 
-        def handle_spawned_vehicle(vehicle_id, closed_lanes, sumo_net):
-            """
-            Check if a vehicle is spawned at a closed lane and move it to the first open lane on its original route.
+    #     def handle_spawned_vehicle(vehicle_id, closed_lanes, sumo_net):
+    #         """
+    #         Check if a vehicle is spawned at a closed lane and move it to the first open lane on its original route.
 
-            :param vehicle_id: ID of the vehicle to check.
-            :param closed_lanes: List of closed lane IDs.
-            :param sumo_net: SUMO network object.
-            """
+    #         :param vehicle_id: ID of the vehicle to check.
+    #         :param closed_lanes: List of closed lane IDs.
+    #         :param sumo_net: SUMO network object.
+    #         """
 
-            def is_closed_lane(lane_id):
-                return lane_id in closed_lanes
+    #         def is_closed_lane(lane_id):
+    #             return lane_id in closed_lanes
 
-            def find_first_open_lane_on_route(route):
-                """
-                Find the first open lane along the vehicle's original route.
+    #         def find_first_open_lane_on_route(route):
+    #             """
+    #             Find the first open lane along the vehicle's original route.
 
-                :param route: The original route of the vehicle (list of edge IDs).
-                :return: The first open lane ID along the route, or None if no open lane is found.
-                """
-                for edge_id in route:
-                    edge = sumo_net.getEdge(edge_id)
-                    for lane in edge.getLanes():
-                        if not is_closed_lane(lane.getID()):
-                            return lane.getID()
-                return None
+    #             :param route: The original route of the vehicle (list of edge IDs).
+    #             :return: The first open lane ID along the route, or None if no open lane is found.
+    #             """
+    #             for edge_id in route:
+    #                 edge = sumo_net.getEdge(edge_id)
+    #                 for lane in edge.getLanes():
+    #                     if not is_closed_lane(lane.getID()):
+    #                         return lane.getID()
+    #             return None
 
-            print("handle spawned vehicle")
-            current_lane = traci.vehicle.getLaneID(vehicle_id)
-            original_route = traci.vehicle.getRoute(vehicle_id)
+    #         print("handle spawned vehicle")
+    #         current_lane = traci.vehicle.getLaneID(vehicle_id)
+    #         original_route = traci.vehicle.getRoute(vehicle_id)
 
-            if is_closed_lane(current_lane):
-                nearby_open_lane = find_first_open_lane_on_route(original_route)
+    #         if is_closed_lane(current_lane):
+    #             nearby_open_lane = find_first_open_lane_on_route(original_route)
 
-                if nearby_open_lane:
-                    print(
-                        f"Vehicle {vehicle_id} spawned at closed lane {current_lane}. Moving to first open lane {nearby_open_lane} on original route."
-                    )
-                    # Move the vehicle to the nearby open lane
-                    traci.vehicle.moveToLane(vehicle_id, nearby_open_lane)
-                else:
-                    print(
-                        f"Vehicle {vehicle_id} spawned at closed lane {current_lane}, but no open lane found on its original route."
-                    )
-            else:
-                print(f"Vehicle {vehicle_id} spawned at open lane {current_lane}.")
-
-        print("entered reroute_vehicle")
-        vehicle_ids = traci.vehicle.getIDList()
-        for vehicle_id in vehicle_ids:
-            if (
-                vehicle_id in self.rerouted_vehicles
-                or vehicle_id in self.no_need_reroute_vehicles
-            ):
-                continue
-
-            if not self.neccessary_reroute(vehicle_id, closed_lanes):
-                continue
-
-            if vehicle_id in self.no_need_reroute_vehicles:
-                continue
-
-            # handle_spawned_vehicle(
-            #     vehicle_id, closed_lanes, self.sumonet_for_construction_zone
-            # )
-            current_edge = traci.vehicle.getRoadID(vehicle_id)
-            destination_edge = traci.vehicle.getRoute(vehicle_id)[-1]
-            try:
-                new_route = self.calculate_new_route(current_edge, destination_edge)
-                print(
-                    f"Rerouting vehicle {vehicle_id} from {current_edge} to {destination_edge}"
-                )
-                print(f"New route: {new_route}")
-                traci.vehicle.setRoute(vehicle_id, new_route)
-                self.rerouted_vehicles.add(vehicle_id)
-            except Exception as e:
-                print(f"Failed to reroute vehicle {vehicle_id}: {e}")
-    ## Another version of reroute function
-    # def reroute_vehicles(self, closed_lanes):
-    #     # Determine the closed edges by stripping the lane index from each closed lane id.
-    #     closed_edges = [closed_lane.rsplit("_", 1)[0] for closed_lane in closed_lanes]
-        
-    #     for veh_id in traci.vehicle.getIDList():
-    #         # Check if this vehicle's route contains any closed edge.
-    #         if not self.neccessary_reroute(veh_id, closed_lanes):
-    #             continue
-
-    #         current_edge = traci.vehicle.getRoadID(veh_id)
-    #         current_route = traci.vehicle.getRoute(veh_id)
-    #         if not current_route:
-    #             continue
-
-    #         # If the vehicle is currently on a closed edge, try to force a lane change.
-    #         if current_edge in closed_edges:
-    #             try:
-    #                 lane_index = traci.vehicle.getLaneIndex(veh_id)
-    #                 # Retrieve the edge object and its lanes.
-    #                 edge_obj = self.sumonet_for_construction_zone.getEdge(current_edge)
-    #                 num_lanes = len(edge_obj.getLanes())
-    #                 # Try to move the vehicle to an adjacent lane.
-    #                 if lane_index < num_lanes - 1:
-    #                     new_lane_index = lane_index + 1
-    #                 elif lane_index > 0:
-    #                     new_lane_index = lane_index - 1
-    #                 else:
-    #                     new_lane_index = lane_index
-
-    #                 traci.vehicle.changeLane(veh_id, new_lane_index, 100)
-    #                 logger.info(
-    #                     f"Vehicle {veh_id} spawned on closed lane {lane_index}; the current edge {current_edge} has {num_lanes} lanes; forced lane change to lane {new_lane_index}"
+    #             if nearby_open_lane:
+    #                 print(
+    #                     f"Vehicle {vehicle_id} spawned at closed lane {current_lane}. Moving to first open lane {nearby_open_lane} on original route."
     #                 )
-    #                 # Skip further rerouting this step so that the lane change can take effect.
-    #                 continue
-    #             except Exception as e:
-    #                 logger.error(f"Vehicle {veh_id} failed lane change: {e}")
+    #                 # Move the vehicle to the nearby open lane
+    #                 traci.vehicle.moveToLane(vehicle_id, nearby_open_lane)
+    #             else:
+    #                 print(
+    #                     f"Vehicle {vehicle_id} spawned at closed lane {current_lane}, but no open lane found on its original route."
+    #                 )
+    #         else:
+    #             print(f"Vehicle {vehicle_id} spawned at open lane {current_lane}.")
+
+    #     print("entered reroute_vehicle")
+    #     vehicle_ids = traci.vehicle.getIDList()
+    #     for vehicle_id in vehicle_ids:
+    #         if (
+    #             vehicle_id in self.rerouted_vehicles
+    #             or vehicle_id in self.no_need_reroute_vehicles
+    #         ):
+    #             continue
+
+    #         if not self.neccessary_reroute(vehicle_id, closed_lanes):
+    #             continue
+
+    #         if vehicle_id in self.no_need_reroute_vehicles:
+    #             continue
+
+    #         # handle_spawned_vehicle(
+    #         #     vehicle_id, closed_lanes, self.sumonet_for_construction_zone
+    #         # )
+    #         current_edge = traci.vehicle.getRoadID(vehicle_id)
+    #         destination_edge = traci.vehicle.getRoute(vehicle_id)[-1]
+    #         try:
+    #             new_route = self.calculate_new_route(current_edge, destination_edge)
+    #             print(
+    #                 f"Rerouting vehicle {vehicle_id} from {current_edge} to {destination_edge}"
+    #             )
+    #             print(f"New route: {new_route}")
+    #             traci.vehicle.setRoute(vehicle_id, new_route)
+    #             self.rerouted_vehicles.add(vehicle_id)
+    #         except Exception as e:
+    #             print(f"Failed to reroute vehicle {vehicle_id}: {e}")
+    ## Another version of reroute function
+    def reroute_vehicle(self, closed_lanes):
+        # Determine the closed edges by stripping the lane index from each closed lane id.
+        closed_edges = [closed_lane.rsplit("_", 1)[0] for closed_lane in closed_lanes]
+        
+        for veh_id in traci.vehicle.getIDList():
+            if veh_id == "CAV":
+                None
+            # Check if this vehicle's route contains any closed edge.
+            if not self.neccessary_reroute(veh_id, closed_lanes):
+                continue
+
+            current_edge = traci.vehicle.getRoadID(veh_id)
+            current_route = traci.vehicle.getRoute(veh_id)
+            if not current_route:
+                continue
+
+            # If the vehicle is currently on a closed edge, try to force a lane change.
+            if current_edge in closed_edges:
+                try:
+                    lane_index = traci.vehicle.getLaneIndex(veh_id)
+                    # Retrieve the edge object and its lanes.
+                    edge_obj = self.sumonet_for_construction_zone.getEdge(current_edge)
+                    num_lanes = len(edge_obj.getLanes())
+                    # Try to move the vehicle to an adjacent lane.
+                    if lane_index < num_lanes - 1:
+                        new_lane_index = lane_index + 1
+                    elif lane_index > 0:
+                        new_lane_index = lane_index - 1
+                    else:
+                        new_lane_index = lane_index
+
+                    traci.vehicle.changeLane(veh_id, new_lane_index, 100)
+                    logger.info(
+                        f"Vehicle {veh_id} spawned on closed lane {lane_index}; the current edge {current_edge} has {num_lanes} lanes; forced lane change to lane {new_lane_index}"
+                    )
+                    # Skip further rerouting this step so that the lane change can take effect.
+                    continue
+                except Exception as e:
+                    logger.error(f"Vehicle {veh_id} failed lane change: {e}")
             
-    #         # Otherwise, compute a new route from the current (possibly open) edge to the destination.
-    #         destination_edge = current_route[-1]
-    #         new_route = traci.simulation.findRoute(current_edge, destination_edge)
-    #         new_route = new_route.edges
-    #         # Check that the new route is valid and actually differs from the current one.
-    #         if new_route and new_route != current_route:
-    #             traci.vehicle.setRoute(veh_id, new_route)
-    #             self.rerouted_vehicles.add(veh_id)
-            #     logger.info(f"Vehicle {veh_id} rerouted from {current_route} to {new_route}")
-            # else:
-            #     logger.warning(f"Vehicle {veh_id} could not be rerouted; no alternative route found")
+            # Otherwise, compute a new route from the current (possibly open) edge to the destination.
+            destination_edge = current_route[-1]
+            new_route = traci.simulation.findRoute(current_edge, destination_edge)
+            new_route = new_route.edges
+            # Check that the new route is valid and actually differs from the current one.
+            if new_route and new_route != current_route:
+                traci.vehicle.setRoute(veh_id, new_route)
+                self.rerouted_vehicles.add(veh_id)
+                logger.info(f"Vehicle {veh_id} rerouted from {current_route} to {new_route}")
+            else:
+                logger.warning(f"Vehicle {veh_id} could not be rerouted; no alternative route found")
 
     def vru_control(self):
 
