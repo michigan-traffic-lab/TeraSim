@@ -7,4 +7,4 @@ dependencies:
   - pip:
       - -e .
       - ./terasim-2024.9.25.1332-py3-none-any.whl
-      - ./terasim_nde_nade-2024.10.31.1454-py3-none-any.whl
+      - ./terasim_nde_nade-2025.4.27.1659-py3-none-any.whl
