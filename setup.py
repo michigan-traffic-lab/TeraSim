@@ -26,7 +26,7 @@ setup(
         "pydantic==2.6.3",
         "redis==5.0.2",
         "utm==0.8.0",
-        "loguru==0.7.3"
+        "loguru==0.7.2"
     ],
     python_requires=">=3.10",
 )
