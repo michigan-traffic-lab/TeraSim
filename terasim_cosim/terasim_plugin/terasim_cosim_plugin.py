@@ -87,10 +87,12 @@ class TeraSimCoSimPlugin:
         else:
             self.sync_cosim_cav_to_terasim()
 
-        self.ped_list = traci.person.getIDList()
+        # self.ped_list = traci.person.getIDList()
+        self.ped_list = traci.vehicle.getIDList()
 
         self.sync_terasim_actor_to_cosim()
         self.sync_terasim_construction_zone_to_cosim()
+        
         # self.sync_cosim_vehicle_to_terasim()
 
         return True
@@ -250,7 +252,7 @@ class TeraSimCoSimPlugin:
             if "BV" in vehID or "CV" in vehID or "POV" in vehID
         ]
         terasim_controlled_pedestrian_list = [
-            pedID for pedID in ped_list if "VRU_" in pedID
+            pedID for pedID in ped_list if "VRU" in pedID
         ]
 
         terasim_controlled_actor_info_with_timestamp = ActorDict()
@@ -286,18 +288,32 @@ class TeraSimCoSimPlugin:
 
         # Pedestrians
         for pedID in terasim_controlled_pedestrian_list:
-            orientation = traci.person.getAngle(pedID)
+            # orientation = traci.person.getAngle(pedID)
+            # orientation = sumo_heading_to_orientation(orientation)
+
+            # location = traci.person.getPosition3D(pedID)
+            # x = location[0] - UTM_OFFSET[0]
+            # y = location[1] - UTM_OFFSET[1]
+            # z = location[2] - UTM_OFFSET[2]
+            # length = traci.person.getLength(pedID)
+            # width = traci.person.getWidth(pedID)
+            # height = traci.person.getHeight(pedID)
+            # speed = traci.person.getSpeed(pedID)
+            # type = traci.person.getTypeID(pedID)
+
+            orientation = traci.vehicle.getAngle(pedID)
             orientation = sumo_heading_to_orientation(orientation)
 
-            location = traci.person.getPosition3D(pedID)
+            location = traci.vehicle.getPosition3D(pedID)
             x = location[0] - UTM_OFFSET[0]
             y = location[1] - UTM_OFFSET[1]
             z = location[2] - UTM_OFFSET[2]
-            length = traci.person.getLength(pedID)
-            width = traci.person.getWidth(pedID)
-            height = traci.person.getHeight(pedID)
-            speed = traci.person.getSpeed(pedID)
-            type = traci.person.getTypeID(pedID)
+            length = traci.vehicle.getLength(pedID)
+            width = traci.vehicle.getWidth(pedID)
+            height = traci.vehicle.getHeight(pedID)
+            speed = traci.vehicle.getSpeed(pedID)
+            type = traci.vehicle.getTypeID(pedID)
+
             direction_x, direction_y = math.cos(orientation), math.sin(orientation)
             ped_info = Actor(
                 x=x,

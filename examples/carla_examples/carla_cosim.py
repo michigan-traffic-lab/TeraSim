@@ -19,7 +19,7 @@ class CarlaCosimPlugin(object):
     def __init__(
         self,
         cosim_controlled_actor_keys=[TERASIM_ACTOR_INFO],
-        control_cav=True,
+        control_cav=False,
     ):
         self.client = carla.Client("127.0.0.1", 2000)
         self.client.set_timeout(2.0)
