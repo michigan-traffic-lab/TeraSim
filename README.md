@@ -66,14 +66,14 @@ cd examples/terasim_examples
 
 TeraSim offers two modes for controlling background vehicles (BVs):
 
-1. Run [Naturalistic Driving Environment (NDE)](https://www.nature.com/articles/s41467-023-37677-5)-based simulation
+1. Run [Naturalistic and Adversarial Driving Environment (NADE)](https://www.nature.com/articles/s41467-021-21007-8)-based simulation
 ```
-python3 terasim_nde_example.py
+python3 terasim_nade_example.py
 ```
 2. Run default SUMO simulation
 
 ```
-python3 terasim_default_sumo_example.py
+python3 terasim_sumo_example.py
 ```
 
 #### TeraSim Configuration Options
@@ -156,9 +156,6 @@ For users looking to run TeraSim with the Mcity Lincoln MKZ fleet equipped with 
 
 ## Known Limitation
 1. CARLA Server Crashes: This is an inherent issue within CARLA. If it happens, restart CARLA along with any related processes.
-2. Vehicle Jittering in CARLA: This occurs due to TeraSim's low update frequency (10Hz) combined with the asynchronous stepping in co-simulation.
-3. Traffic Light Co-Simulation: Currently, traffic light synchronization between TeraSim and CARLA is not supported. However, you can still access traffic light status from TeraSim and utilize it in your algorithms without visual representation in CARLA.
-4. Bicycle and Pedestrian Co-Simulation: Support for co-simulating bicycles and pedestrians between TeraSim and CARLA is not available at the moment. We plan to introduce this feature in the future.
 
 ## Developer
 

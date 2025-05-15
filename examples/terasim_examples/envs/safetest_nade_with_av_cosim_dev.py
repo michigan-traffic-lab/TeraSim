@@ -66,7 +66,7 @@ class JayWalkingPerson(ExternalPerson):
     @staticmethod
     def satisfy(p_id):
         """
-        条件：行人走在一条有车行道的路的人行道上，人行道在最右侧，中间没有任何隔断
+        条件：行人走在一条有车行道的路的人行道上,人行道在最右侧,中间没有任何隔断
         而且人离边的起终点都有一定距离
         """
 
@@ -100,7 +100,7 @@ class JayWalkingPerson(ExternalPerson):
         return has_sidewalk and has_road and (not have_separation)
 
     def on_begin(self):
-        """让行人转一个方向，如果正向行走，就左转90度；否则右转90度"""
+        """让行人转一个方向,如果正向行走,就左转90度;否则右转90度"""
         print("call")
 
         def is_pedestrian_moving_forward(p_id):
@@ -128,9 +128,6 @@ class JayWalkingPerson(ExternalPerson):
         if is_pedestrian_moving_forward(self.id):
             self.angle = (current_angle - 90) % 360  # 左转
             print("turn left")
-        # else:
-        #     self.angle = (current_angle + 90) % 360  # 右转
-        #     print("turn right")
 
     def execute(self):
         self.curr_distance += force_person_move_forward(
@@ -138,12 +135,12 @@ class JayWalkingPerson(ExternalPerson):
         )
 
     def until(self):
-        """当行人走出一开始的边时，结束"""
+        """当行人走出一开始的边时,结束"""
         return self.curr_distance >= self.total_width
         # return self.current_step == 10
 
     def on_end(self):
-        """结束时，直接删掉这个行人"""
+        """结束时,直接删掉这个行人"""
         traci.person.remove(self.id)
 
 
@@ -214,7 +211,7 @@ class AlteratingRidingBike(ExternalPerson):
         )
 
     def execute(self) -> None:
-        """开始时：让它左偏一定度数，然后直走；直走固定距离后，往右偏，再走固定步数；最后角度回归"""
+        """开始时：让它左偏一定度数,然后直走;直走固定距离后,往右偏,再走固定步数;最后角度回归"""
         if self.current_step == 0:
             self.curr_angle = (traci.person.getAngle(self.id) - self.turn_angle) % 360
         if self.current_step == self.step_number:
@@ -242,7 +239,7 @@ class RunRedLightPerson(ExternalPerson):
     @staticmethod
     def satisfy(p_id) -> bool:
         """
-        行人必须在一条被红绿灯控制的lane上，并且它的速度很小，我们就判断它在等红灯
+        行人必须在一条被红绿灯控制的lane上,并且它的速度很小,我们就判断它在等红灯
         """
         # should be waiting
         if traci.person.getSpeed(p_id) > 0.2:
@@ -280,8 +277,8 @@ class RunRedLightPerson(ExternalPerson):
 
 def force_person_move_forward(id, mode=0b110, speed=None, angle=None) -> float:
     """强制行人向特定方向以特定速度移动
-    如果方向不给出，默认为当前方向
-    如果速度不给出，默认为该行人的最大速度
+    如果方向不给出,默认为当前方向
+    如果速度不给出,默认为该行人的最大速度
     """
 
     current_pos = traci.person.getPosition(id)
@@ -325,10 +322,7 @@ class SafeTestNADEWithAVCosim(SafeTestNADEWithAV):
 
     def on_start(self, ctx):
         print("on start initializing agent controls")
-        # self.sumonet_for_construction_zone: Net = readNet(
-        #     "/media/mtl/2TB/syh_dev/Mcity-2.0-API-for-AV-motion-planning-main/examples/maps/Mcity_safetest/mcity_disallow_ped_adjusted_test.net.xml",
-        #     withInternal=True,
-        # )  ## TODO: Fix this
+
         current_dir = os.path.dirname(os.path.abspath(__file__))
         net_path = os.path.join(current_dir, "..", "maps", "mcity.net.xml")
         net_path = os.path.normpath(net_path)
@@ -412,7 +406,7 @@ class SafeTestNADEWithAVCosim(SafeTestNADEWithAV):
     def calculate_new_route(self, current_edge, destination_edge):
         """
         计算新的路线。
-        使用Dijkstra算法计算新的路线，同时排除关闭的车道。
+        使用Dijkstra算法计算新的路线, 同时排除关闭的车道。
         """
 
         # 使用Dijkstra算法计算新的路线
@@ -455,101 +449,7 @@ class SafeTestNADEWithAVCosim(SafeTestNADEWithAV):
         self.no_need_reroute_vehicles.add(vehicle_id)
         return False
 
-    # def handle_departing_vehicles(self):
-    #     # Get vehicles that are scheduled to be added this step
-    #     closed_edges = [closed_lane.rsplit("_", 1)[0] for closed_lane in self.closed_lane_ids]
-    #     departed_vehicles = traci.simulation.getDepartedIDList()
-    #     for veh_id in departed_vehicles:
-    #         departure_edge = traci.vehicle.getRoadID(veh_id)
-    #         if departure_edge in closed_edges:
-    #             # Calculate a new route from the departure edge to the vehicle's destination.
-    #             # This could use your existing calculate_new_route function or any Dijkstra-based approach.
-    #             destination_edge = traci.vehicle.getRoute(veh_id)[-1]
-    #             try:
-    #                 new_route = self.calculate_new_route(departure_edge, destination_edge)
-    #                 traci.vehicle.setRoute(veh_id, new_route)
-    #                 print(f"Vehicle {veh_id} rerouted pre-spawn from {departure_edge} to avoid closed lane.")
-    #             except Exception as e:
-    #                 print(f"Failed to reroute vehicle {veh_id}: {e}")
-    # def reroute_vehicle(self, closed_lanes):
-
-    #     def handle_spawned_vehicle(vehicle_id, closed_lanes, sumo_net):
-    #         """
-    #         Check if a vehicle is spawned at a closed lane and move it to the first open lane on its original route.
-
-    #         :param vehicle_id: ID of the vehicle to check.
-    #         :param closed_lanes: List of closed lane IDs.
-    #         :param sumo_net: SUMO network object.
-    #         """
-
-    #         def is_closed_lane(lane_id):
-    #             return lane_id in closed_lanes
-
-    #         def find_first_open_lane_on_route(route):
-    #             """
-    #             Find the first open lane along the vehicle's original route.
-
-    #             :param route: The original route of the vehicle (list of edge IDs).
-    #             :return: The first open lane ID along the route, or None if no open lane is found.
-    #             """
-    #             for edge_id in route:
-    #                 edge = sumo_net.getEdge(edge_id)
-    #                 for lane in edge.getLanes():
-    #                     if not is_closed_lane(lane.getID()):
-    #                         return lane.getID()
-    #             return None
-
-    #         print("handle spawned vehicle")
-    #         current_lane = traci.vehicle.getLaneID(vehicle_id)
-    #         original_route = traci.vehicle.getRoute(vehicle_id)
-
-    #         if is_closed_lane(current_lane):
-    #             nearby_open_lane = find_first_open_lane_on_route(original_route)
-
-    #             if nearby_open_lane:
-    #                 print(
-    #                     f"Vehicle {vehicle_id} spawned at closed lane {current_lane}. Moving to first open lane {nearby_open_lane} on original route."
-    #                 )
-    #                 # Move the vehicle to the nearby open lane
-    #                 traci.vehicle.moveToLane(vehicle_id, nearby_open_lane)
-    #             else:
-    #                 print(
-    #                     f"Vehicle {vehicle_id} spawned at closed lane {current_lane}, but no open lane found on its original route."
-    #                 )
-    #         else:
-    #             print(f"Vehicle {vehicle_id} spawned at open lane {current_lane}.")
-
-    #     print("entered reroute_vehicle")
-    #     vehicle_ids = traci.vehicle.getIDList()
-    #     for vehicle_id in vehicle_ids:
-    #         if (
-    #             vehicle_id in self.rerouted_vehicles
-    #             or vehicle_id in self.no_need_reroute_vehicles
-    #         ):
-    #             continue
-
-    #         if not self.neccessary_reroute(vehicle_id, closed_lanes):
-    #             continue
-
-    #         if vehicle_id in self.no_need_reroute_vehicles:
-    #             continue
-
-    #         # handle_spawned_vehicle(
-    #         #     vehicle_id, closed_lanes, self.sumonet_for_construction_zone
-    #         # )
-    #         current_edge = traci.vehicle.getRoadID(vehicle_id)
-    #         destination_edge = traci.vehicle.getRoute(vehicle_id)[-1]
-    #         try:
-    #             new_route = self.calculate_new_route(current_edge, destination_edge)
-    #             print(
-    #                 f"Rerouting vehicle {vehicle_id} from {current_edge} to {destination_edge}"
-    #             )
-    #             print(f"New route: {new_route}")
-    #             traci.vehicle.setRoute(vehicle_id, new_route)
-    #             self.rerouted_vehicles.add(vehicle_id)
-    #         except Exception as e:
-    #             print(f"Failed to reroute vehicle {vehicle_id}: {e}")
-    ## Another version of reroute function
+    # Another version of reroute function
     def reroute_vehicle(self, closed_lanes):
         # Determine the closed edges by stripping the lane index from each closed lane id.
         closed_edges = [closed_lane.rsplit("_", 1)[0] for closed_lane in closed_lanes]
@@ -607,10 +507,6 @@ class SafeTestNADEWithAVCosim(SafeTestNADEWithAV):
                 )
 
     def vru_control(self):
-
-        # print(
-        #     f"-----------step {traci.simulation.getTime()//traci.simulation.getDeltaT()}, time {traci.simulation.getTime()}---------"
-        # )
         people_list = self.ped_list
         for id in people_list:
             if id not in self.person_information:

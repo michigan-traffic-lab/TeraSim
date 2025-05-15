@@ -393,7 +393,7 @@ class CarlaCosimPlugin(object):
 
 def main():
     carla_cosim_plugin = CarlaCosimPlugin()
-    step_length = 0.04
+    step_length = 0.1
 
     settings = carla_cosim_plugin.world.get_settings()
     settings.fixed_delta_seconds = step_length

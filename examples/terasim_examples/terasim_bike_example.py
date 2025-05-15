@@ -10,7 +10,7 @@ from terasim_cosim.constants import *
 from terasim_cosim.terasim_plugin.terasim_tls_plugin import TeraSimTLSPlugin
 from terasim_cosim.terasim_plugin.terasim_cosim_plugin import TeraSimCoSimPlugin
 
-from envs.env_mcity_joint_control import (
+from envs.mcity_joint_control import (
     TeraSimEnvForUser,
     ExampleVehicleFactory,
 )

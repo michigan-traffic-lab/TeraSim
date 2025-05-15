@@ -34,14 +34,14 @@ class SafeTestNADEWithAVCosim(SafeTestNADEWithAV):
         maneuver_challenge_dicts,
         veh_ctx_dicts,
     ):
-        return 0.0
+        return 0.05
 
     def on_step(self, ctx):
         """The main step function for the environment"""
 
-        continue_flag = self.user_step(traci)
+        super().on_step(ctx)
 
-        return continue_flag
+        return self.user_step(traci)
 
     def on_stop(self, ctx):
         """Description: The stop function for the environment."""

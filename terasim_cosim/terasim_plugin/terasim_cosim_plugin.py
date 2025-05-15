@@ -28,7 +28,6 @@ class TeraSimCoSimPlugin:
         control_cav=False,
         keepRoute=2,
         CAVSpeedOverride=True,
-        bv_max_dist=500.0,
         pub_channels=[],
         sub_channels=[],
         latency_src_channels=[],
@@ -45,8 +44,6 @@ class TeraSimCoSimPlugin:
 
         self.cav_x = 0.0
         self.cav_y = 0.0
-
-        self.bv_max_dist = bv_max_dist
 
         self.pub_channels = pub_channels
         self.sub_channels = sub_channels
@@ -91,6 +88,7 @@ class TeraSimCoSimPlugin:
 
         self.sync_terasim_actor_to_cosim()
         self.sync_terasim_construction_zone_to_cosim()
+        
         # self.sync_cosim_vehicle_to_terasim()
 
         return True
