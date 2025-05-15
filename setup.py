@@ -27,8 +27,18 @@ setup(
         "redis==5.0.2",
         "utm==0.8.0",
         "loguru==0.7.2",
-        "boto3==1.38.5"
+        "boto3==1.38.5",
+        "pyyaml==6.0.2",
+        "tqdm==4.67.1",
+        "scikit-learn==1.6.1",
+        "rich==14.0.0",
+        "pandas==2.2.3",
+        "matplotlib==3.10.3",
+        "beautifulsoup4==4.13.4",
+        "termcolor==3.1.0",
+        "shapely==2.1.0",
+        "openpyxl==3.1.5",
+        "av2==0.3.4",
     ],
-    python_requires=">=3.10",
+    python_requires=">=3.10"
 )
-
