@@ -51,6 +51,12 @@ class TeraSimEnvForUser(EnvTemplate):
         traci.vehicle.add(vehID="CAV", routeID="cav_route", typeID="NDE_URBAN")
         traci.vehicle.setColor("CAV", (255, 0, 0, 255))
 
+        traci.vehicle.add(vehID="CAV_1", routeID="r_0", typeID="NDE_URBAN")
+        traci.vehicle.setColor("CAV_1", (0, 255, 0, 255))
+
+        traci.vehicle.add(vehID="CAV_2", routeID="r_1", typeID="NDE_URBAN")
+        traci.vehicle.setColor("CAV_2", (0, 255, 0, 255))
+
         print("Terasim Started!")
 
     def on_step(self, ctx):
@@ -59,6 +65,11 @@ class TeraSimEnvForUser(EnvTemplate):
         time_start = time.perf_counter()
 
         continue_flag = self.user_step(traci)
+
+        traci.vehicle.setSpeed("CAV", 0.0)
+
+        traci.vehicle.setColor("CAV_1", (0, 255, 0, 255))
+        traci.vehicle.setColor("CAV_2", (0, 255, 0, 255))
 
         time_observation = time.perf_counter()
         logger.info(
