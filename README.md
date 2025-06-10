@@ -91,51 +91,9 @@ The TeraSim (SUMO) supports both **pre-configured** and **runtime-configured**:
 
  __IMPORTANT__: The NDE simulation is a fine-tuned environment for autonomous vehicle (AV) testing. To ensure stability, avoid using TraCI to control BVs actions, as this may lead to simulation crashes. However, you can safely read background traffic data.
  
-### Run CARLA
-If Carla co-simulation is used, users should send control commands directly to CARLA, where they will be executed, with the AV synchronized in TeraSim.
+### TeraSim Closed-Loop Testing
 
-Follow the instructions to set up and run [Mcity Digital Twin](https://github.com/mcity/mcity-digital-twin) in the CARLA simulator.
-
-To run cosim, navigate to the carla example directory.
-```
-cd examples/carla_examples
-```
-
-#### Run the AV Stack
-
-Launch the AV stack to spawn an AV that supports both manual and autonomous control:
-```
-python3 carla_av_stack.py
-```
-
-#### Manual Control
-1. Ensure the `pygame` window is active by moving the mouse cursor over it.
-2. Use the **arrow keys** to drive the AV manually.
-   - **Press `q`** to toggle reverse mode.
-
-#### Autonomous Control
-1. Modify the `send_av_control` function in the `terasim_user_functions.py` file to define the desired autonomous behavior.
-2. While in manual mode, **press `p`** to switch to autonomous control.
-
-#### Ruuning Co-simulation
-Run the CARLA co-simulation script to synchronize the AV and BVs.
-
-```
-python3 carla_cosim.py
-```
-
-#### Run AV sensors (optional)
-For users needing to simulate perception data, we provide a template to generate LiDAR and varying camera images from CARLA and convert them to ROS2 format. To utilize this feature, users must install [ROS2](https://docs.ros.org/en/humble/index.html) and have a basic understanding of its framework. Detailed comments are included in the file to assist with setup and usage. The script can be executed using the following command:
-```
-python3 carla_sensor_ros2.py
-```
-
-### Run Real AV
-For users looking to run TeraSim with the Mcity Lincoln MKZ fleet equipped with autonomous driving capabilities, visit the [Mcity-2.0-API-for-AV-planning-and-control](https://github.com/michigan-traffic-lab/Mcity-2.0-API-for-AV-motion-planning) repository. Complete all required installations and follow the instructions provided in the __Run AV with TeraSim__ section. We provide two approaches to control the AV. For each approach, refer to the AV repo for additional instructions.
-
-1. Control Approach: Users can use the `send_av_control` function as described in the CARLA section. Due to differences in the dynamics model and the sim-to-real gap, a controller that works in CARLA will not be directly applicable to a real autonomous vehicle. With proper tuning and adjustments, though, the controller can be adapted to function effectively in real-world scenarios.
-
-2. Planning Approach: Users can use the `send_av_planning` function to send a high-level planning trajectory for the autonomous vehicle. This trajectory will be processed through our fine-tuned controller ([Preview Control](https://ieeexplore.ieee.org/abstract/document/8637808)) and converted into low-level control commands. The source code can be found in our AV repository, allowing users to gain a deeper understanding of the controller and customize it as needed.
+For users interested in running TeraSim with Mcity real CAV fleet or Mcity ditigal twin in the CARLA simulator, check [Mcity-2.0-API-for-AV-motion-planning](https://github.com/michigan-traffic-lab/Mcity-2.0-API-for-AV-motion-planning).
 
 ## Troubleshooting
 
@@ -153,9 +111,6 @@ For users looking to run TeraSim with the Mcity Lincoln MKZ fleet equipped with 
     "_Could not create server TCP listening socket *:6379: bind: Address already in use_",
     ```
     That means the Redis server is already running, and you can proceed without further action.
-
-## Known Limitation
-1. CARLA Server Crashes: This is an inherent issue within CARLA. If it happens, restart CARLA along with any related processes.
 
 ## Developer
 
