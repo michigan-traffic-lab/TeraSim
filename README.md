@@ -73,7 +73,7 @@ python3 terasim_nade_example.py
 2. Run default SUMO simulation
 
 ```
-python3 terasim_sumo_example.py
+python3 terasim_default_example.py
 ```
 
 #### TeraSim Configuration Options
