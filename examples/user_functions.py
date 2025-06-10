@@ -27,11 +27,6 @@ def user_step(traci):
     # send_av_control(vehicle_info)
     # send_av_planning(vehicle_info)
 
-    # IMPORANT
-    # update BVs through traci, only use this function for plain terasim simulation
-    # trying to customize the BVs in NDE simulation may lead to simulation crash
-    update_bv_action(traci, vehicle_info)
-
     continue_flag = True
     return continue_flag
 
@@ -78,18 +73,6 @@ def get_tls_info(traci):
         tls_info[tl_id] = tls_state
 
     return tls_info
-
-
-def update_bv_action(traci, vehicle_info):
-    """
-    Some example traci functions to control the simulation.
-    For more information, please refer to the traci documentation.
-    https://sumo.dlr.de/docs/TraCI.html
-    """
-
-    for vehID, veh_info in vehicle_info.items():
-        if vehID != "CAV":
-            traci.vehicle.setColor(vehID, (255, 255, 0, 255))
 
 
 def send_av_control(vehicle_info):

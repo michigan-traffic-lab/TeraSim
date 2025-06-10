@@ -1,9 +1,6 @@
 __pycache__/
 
 build/
-install/
-log/
-
 *.egg-info/
 
 output/
