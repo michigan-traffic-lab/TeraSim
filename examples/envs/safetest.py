@@ -25,8 +25,6 @@ class SafeTestNADEWithAVCosim(SafeTestNADEWithAV):
         super().on_start(ctx)
         traci.vehicle.setColor("CAV", (255, 0, 0, 255))
 
-        print("Terasim Started!")
-
     def get_IS_prob(
         self,
         veh_id,

@@ -1,19 +1,20 @@
-import os
 import math
 import time
-import sumolib
-import lxml.etree as ET
-import numpy as np
 import copy
+import numpy as np
+
+from terasim_utils import *
 
 from terasim.overlay import traci
 from terasim.simulator import Simulator
+
 from terasim_cosim.constants import *
-from terasim_cosim.terasim_plugin.utils import *
 from terasim_cosim.redis_client_wrapper import create_redis_client
 from terasim_cosim.redis_msgs import (
     Actor,
     ActorDict,
+    SUMOSignal,
+    SUMOSignalDict,
     ConstructionZone,
 )
 
@@ -22,12 +23,11 @@ class TeraSimCoSimPlugin:
 
     def __init__(
         self,
-        cosim_controlled_vehicle_keys=[],
-        cosim_controlled_pedestrian_keys=[],
         remote_flag=False,
         control_cav=False,
-        keepRoute=2,
-        CAVSpeedOverride=True,
+        control_tls=True,
+        keepRoute=1,
+        CAVSpeedOverride=False,
         pub_channels=[],
         sub_channels=[],
         latency_src_channels=[],
@@ -39,18 +39,14 @@ class TeraSimCoSimPlugin:
 
         self.remote_flag = remote_flag
         self.control_cav = control_cav
+        self.control_tls = control_tls
         self.keepRoute = keepRoute
         self.CAVSpeedOverride = CAVSpeedOverride
-
-        self.cav_x = 0.0
-        self.cav_y = 0.0
 
         self.pub_channels = pub_channels
         self.sub_channels = sub_channels
         self.latency_src_channels = latency_src_channels
 
-        self.cosim_controlled_vehicle_keys = cosim_controlled_vehicle_keys
-        self.cosim_controlled_pedestrian_keys = cosim_controlled_pedestrian_keys
         self.closed_lane_ids = closed_lane_ids
         self.closed_lane_pos = closed_lane_pos
         self.closed_lane_shapes = closed_lane_shapes
@@ -58,14 +54,10 @@ class TeraSimCoSimPlugin:
     def on_start(self, simulator: Simulator, ctx):
         key_value_config = {
             CAV_INFO: ActorDict,
+            TLS_INFO: SUMOSignalDict,
             TERASIM_ACTOR_INFO: ActorDict,
             CONSTRUCTION_ZONE_INFO: ConstructionZone,
         }
-
-        for key in self.cosim_controlled_vehicle_keys:
-            key_value_config[key] = ActorDict
-        for key in self.cosim_controlled_pedestrian_keys:
-            key_value_config[key] = ActorDict
 
         self.redis_client = create_redis_client(
             key_value_config=key_value_config,
@@ -75,21 +67,19 @@ class TeraSimCoSimPlugin:
             latency_src_channels=self.latency_src_channels,
         )
 
-        # self.net = self.get_sumo_net(self.simulator.sumo_config_file_path)
-        # self.init_cosim_route()
-
     def on_step(self, simulator: Simulator, ctx):
         if self.control_cav:
             self.sync_terasim_cav_to_cosim()
         else:
             self.sync_cosim_cav_to_terasim()
 
-        self.ped_list = traci.person.getIDList()
+        if self.control_tls:
+            self.sync_terasim_tls_to_cosim()
+        else:
+            self.sync_cosim_tls_to_terasim()
 
         self.sync_terasim_actor_to_cosim()
         self.sync_terasim_construction_zone_to_cosim()
-        
-        # self.sync_cosim_vehicle_to_terasim()
 
         return True
 
@@ -173,9 +163,6 @@ class TeraSimCoSimPlugin:
             construction_zone_terasim_info,
         )
 
-        # retrieved_data = self.redis_client.get(CONSTRUCTION_ZONE_INFO)
-        # assert retrieved_data is not None, "Construction zone data is missing in Redis"
-
     def sync_terasim_cav_to_cosim(self):
         orientation = traci.vehicle.getAngle("CAV")
         orientation = sumo_heading_to_orientation(orientation)
@@ -240,15 +227,13 @@ class TeraSimCoSimPlugin:
     def sync_terasim_actor_to_cosim(self):
         """sync sumo controlled actor to cosim"""
         veh_list = self.simulator.get_vehID_list()
-        ped_list = self.ped_list
+        ped_list = traci.person.getIDList()
 
         terasim_controlled_vehicle_list = [
-            vehID
-            for vehID in veh_list
-            if "BV" in vehID or "CV" in vehID or "POV" in vehID
+            vehID for vehID in veh_list if "BV" in vehID or "POV" in vehID
         ]
         terasim_controlled_pedestrian_list = [
-            pedID for pedID in ped_list if "VRU_" in pedID
+            pedID for pedID in ped_list if "VRU" in pedID
         ]
 
         terasim_controlled_actor_info_with_timestamp = ActorDict()
@@ -317,122 +302,41 @@ class TeraSimCoSimPlugin:
             TERASIM_ACTOR_INFO, terasim_controlled_actor_info_with_timestamp
         )
 
-    def sync_cosim_vehicle_to_terasim(self):
-        cosim_vehicle_id_record = []
+    def sync_terasim_tls_to_cosim(self):
+        sumo_tls = self.get_all_tls_info()
 
-        for key in self.cosim_controlled_vehicle_keys:
-            try:
-                cosim_controlled_vehicle_info = self.redis_client.get(key)
-            except:
-                print(key + " not available. Exiting...")
-                continue
+        nextTLS = traci.vehicle.getNextTLS("CAV")
+        if nextTLS:
+            tlsID, tlsIndex, distance, state = nextTLS[0]
+        else:
+            state, distance = "", 0.0
 
-            if cosim_controlled_vehicle_info:
-                data = cosim_controlled_vehicle_info.data
+        tls_info = SUMOSignalDict()
+        tls_info.header.timestamp = time.time()
+        tls_info.header.information = "TeraSim"
+        tls_info.av_next_tls = state
+        tls_info.av_next_dist = distance
 
-                veh_list = self.simulator.get_vehID_list()
+        for tls_id in sumo_tls:
+            signal = SUMOSignal()
+            signal.tls = sumo_tls[tls_id]
+            tls_info.data[tls_id] = signal
 
-                for vehID in data:
-                    cosim_vehicle_id_record.append(vehID)
+        self.redis_client.set(TLS_INFO, tls_info)
 
-                    if vehID not in veh_list:
-                        vclass = traci.vehicletype.getVehicleClass("NDE_URBAN")
-                        traci.vehicle.add(vehID, "cosim_route_{}".format(vclass))
-                        traci.vehicle.setColor(vehID, (150, 255, 255, 255))
+    def sync_cosim_tls_to_terasim(self):
+        cosim_controlled_tls_info = self.redis_client.get(TLS_INFO)
+        if cosim_controlled_tls_info:
+            data = cosim_controlled_tls_info.data
+            for signal_id in data:
+                traci.trafficlight.setRedYellowGreenState(
+                    signal_id, data[signal_id].tls
+                )
 
-                    else:
-                        x = data[vehID].x + UTM_OFFSET[0]
-                        y = data[vehID].y + UTM_OFFSET[1]
-                        orientation = data[vehID].orientation
-                        length = data[vehID].length
+    def get_all_tls_info(self):
+        self.tls_id_list = traci.trafficlight.getIDList()
 
-                        x, y = center_coordinate_to_front_coordinate(
-                            x, y, orientation, length
-                        )
-                        orientation = orientation_to_sumo_heading(orientation)
-
-                        traci.vehicle.moveToXY(
-                            vehID,
-                            "",
-                            0,
-                            x,
-                            y,
-                            angle=orientation,
-                            keepRoute=self.keepRoute,
-                        )
-
-        veh_list = self.simulator.get_vehID_list()
-        for vehID in veh_list:
-            if (
-                ("BV" not in vehID)
-                and ("CAV" not in vehID)
-                and (vehID not in cosim_vehicle_id_record)
-            ):
-                traci.vehicle.unsubscribe(vehID)
-                traci.vehicle.remove(vehID)
-
-    def sync_cosim_pedestrian_to_terasim(self):
-        cosim_pedestrian_id_record = []
-
-        for key in self.cosim_controlled_pedestrian_keys:
-            try:
-                cosim_controlled_pedestrian_info = self.redis_client.get(key)
-            except:
-                print(key + " not available. Exiting...")
-                continue
-
-            if cosim_controlled_pedestrian_info:
-                data = cosim_controlled_pedestrian_info.data
-
-                ped_list = self.simulator.get_vehID_list()
-
-                for pedID in data:
-                    cosim_pedestrian_id_record.append(pedID)
-
-                    if pedID not in ped_list:
-                        traci.person.add(pedID, "cosim_pedestrian_route")
-                        traci.person.setColor(pedID, (255, 150, 150, 255))
-
-                    else:
-                        x = data[pedID]["x"] + UTM_OFFSET[0]
-                        y = data[pedID]["y"] + UTM_OFFSET[1]
-
-                        traci.person.moveToXY(pedID, "", 0, x, y)
-
-        # ped_list = traci.person.getIDList()
-        ped_list = self.ped_list
-        for pedID in ped_list:
-            if (
-                ("pf_" not in pedID)
-                and ("vpf_" not in pedID)
-                and (pedID not in cosim_pedestrian_id_record)
-            ):
-                traci.person.remove(pedID)
-
-    def get_sumo_net(self, cfg_file):
-        """
-        Returns sumo net.
-
-        This method reads the sumo configuration file and retrieve the sumo net filename to create the
-        net.
-        """
-        cfg_file = os.path.join(os.getcwd(), cfg_file)
-
-        tree = ET.parse(cfg_file)
-        tag = tree.find("//net-file")
-        if tag is None:
-            return None
-
-        net_file = os.path.join(os.path.dirname(cfg_file), tag.get("value"))
-        print("Reading net file: %s", net_file)
-
-        sumo_net = sumolib.net.readNet(net_file)
-        return sumo_net
-
-    def init_cosim_route(self):
-        vclass = traci.vehicletype.getVehicleClass("NDE_URBAN")
-        allowed_edges = [e for e in self.net.getEdges() if e.allows(vclass)]
-        traci.route.add(
-            "cosim_route_{}".format(vclass),
-            [allowed_edges[0].getID()],
-        )
+        tls_info = {}
+        for tls_id in self.tls_id_list:
+            tls_info[tls_id] = traci.trafficlight.getRedYellowGreenState(tls_id)
+        return tls_info

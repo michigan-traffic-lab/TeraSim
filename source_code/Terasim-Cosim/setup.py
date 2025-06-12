@@ -2,10 +2,10 @@ from setuptools import setup, find_packages
 
 setup(
     name="terasim_cosim",
-    version="2.0",
-    description="TeraSim co-simulation with other simulators",
+    version="2025.06.11",
+    description="TeraSim redis co-simulation with other platforms",
     author="Zhijie Qiao, Haowei Sun, Haojie Zhu, Yihao Sun",
-    author_email="zhijieq@umich.edu, haoweis@umich.edu, zhuhj@umich.edu",
+    author_email="zhijieq@umich.edu",
     license="MIT",
     packages=find_packages(
         where=".",
@@ -13,7 +13,6 @@ setup(
             "terasim_cosim",
             "terasim_cosim.redis_client_wrapper",
             "terasim_cosim.redis_msgs",
-            "terasim_cosim.terasim_plugin",
         ],
     ),
     install_requires=[
@@ -22,7 +21,5 @@ setup(
         "redis==5.0.2",
         "utm==0.8.0",
         "loguru==0.7.2",
-        "matplotlib==3.10.3",
     ],
-    python_requires=">=3.10"
 )

@@ -51,8 +51,6 @@ class TeraSimEnvForUser(EnvTemplate):
         traci.vehicle.add(vehID="CAV", routeID="cav_route", typeID="NDE_URBAN")
         traci.vehicle.setColor("CAV", (255, 0, 0, 255))
 
-        print("Terasim Started!")
-
     def on_step(self, ctx):
         """The main step function for the environment"""
 

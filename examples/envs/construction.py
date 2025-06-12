@@ -41,6 +41,7 @@ class ConstructionCosim(SafeTestNADEWithAV):
 
         # self.reroute_vehicle(self.closed_lane_ids)
         super().on_start(ctx)
+        traci.vehicle.setColor("CAV", (255, 0, 0, 255))
 
     ## helper functions for agent controlling
     def close_lane(self, lane_ids):
@@ -49,12 +50,7 @@ class ConstructionCosim(SafeTestNADEWithAV):
         self.lane_closed = True
 
     def calculate_new_route(self, current_edge, destination_edge):
-        """
-        计算新的路线。
-        使用Dijkstra算法计算新的路线, 同时排除关闭的车道。
-        """
-
-        # 使用Dijkstra算法计算新的路线
+        # Usew Dijkstra to compute new path
         route = self.sumonet_for_construction_zone.getShortestPath(
             self.sumonet_for_construction_zone.getEdge(current_edge),
             self.sumonet_for_construction_zone.getEdge(destination_edge),

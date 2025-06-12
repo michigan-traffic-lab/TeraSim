@@ -69,7 +69,7 @@ cd examples
 
 TeraSim offers multimodal examples:
 
-1. [Naturalistic and Adversarial Driving Environment (NADE)](https://www.nature.com/articles/s41467-021-21007-8) simulation: `python3 nade_example.py`
+1. [Naturalistic and Adversarial Driving Environment (NADE)](https://www.nature.com/articles/s41467-021-21007-8) simulation: `python3 safetest_nade_example.py`
 
 2. Default SUMO simulation: `python3 default_sumo_example.py`
 

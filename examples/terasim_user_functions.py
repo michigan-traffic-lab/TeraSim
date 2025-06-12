@@ -1,4 +1,4 @@
-from terasim_cosim.terasim_plugin.utils import (
+from terasim_utils import (
     send_user_av_control_wrapper,
     send_user_av_planning_wrapper,
 )
