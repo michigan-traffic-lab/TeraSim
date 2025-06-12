@@ -30,36 +30,26 @@ A key feature of TeraSim is its co-simulation functionality, which enables seaml
 - __System__: Ubuntu 22.04 (
 For optimal performance and stability, we recommend installing the system on a **dedicated machine** rather than a virtual machine).
 
-#### Dependencies
-
-- __Redis__: follow the instructions to install [Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/).
-
-
-- __Anaconda__: download and install [Anaconda](https://www.anaconda.com/download/success).
-
-
 #### Clone the Repository
 ```bash
 git clone https://github.com/michigan-traffic-lab/TeraSim.git
 ```
 
-#### Setup a Virtual Environment
+#### Install the Packages
 ```
-# Create a virtual environment
-conda env create -f terasim-cosim.yaml
-
-# Activate the virtual environment
-conda activate terasim-cosim
+bash install.sh
 ```
 
 ## Usage
 
 ### Set up Redis
-Set up a Redis server as an in-memory data structure store and leave it running in the background.
+
+Follow the instructions to install [Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/). Set up a Redis server as an in-memory data structure store and leave it running in the background.
 
 ```
 redis-server
 ```
+
 ### Run TeraSim
 
 To run TeraSim, navigate to the example directory.
