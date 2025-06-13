@@ -214,17 +214,17 @@ class CarlaCosimPlugin(object):
                 print(key + " not found available. Exiting...")
                 continue
 
-        if cosim_controlled_actor_info:
-            data = cosim_controlled_actor_info.data
+            if cosim_controlled_actor_info:
+                data = cosim_controlled_actor_info.data
 
-            for id in data:
-                if isPedestrian(id):
-                    self._process_pedestrian(id, data[id], cosim_id_record)
-                elif isVehicle(id):
-                    self._process_vehicle(id, data[id], cosim_id_record)
+                for id in data:
+                    if isPedestrian(id):
+                        self._process_pedestrian(id, data[id], cosim_id_record)
+                    elif isVehicle(id):
+                        self._process_vehicle(id, data[id], cosim_id_record)
 
-        self._cleanup_actors("vehicle", "vehicle.*", cosim_id_record)
-        self._cleanup_actors("pedestrian", "walker.pedestrian.*", cosim_id_record)
+            self._cleanup_actors("vehicle", "vehicle.*", cosim_id_record)
+            self._cleanup_actors("pedestrian", "walker.pedestrian.*", cosim_id_record)
 
     def sync_cosim_construction_zone_to_carla(self):
         def add_interpolated_points(points, offset):
@@ -309,7 +309,12 @@ class CarlaCosimPlugin(object):
                 else self.vehicle_blueprints
             )
             blueprint.set_attribute("role_name", id)
-            blueprint.set_attribute("color", "0, 102, 204")
+
+            if "CAV" in id:
+                blueprint.set_attribute("color", "255, 0, 0")
+            else:
+                blueprint.set_attribute("color", "0, 102, 204")
+
             z = get_z_offset(self.world, start_location, end_location)
             transform = carla.Transform(
                 carla.Location(x=x, y=y, z=z + 0.5), carla.Rotation(yaw=yaw)
@@ -383,7 +388,7 @@ class CarlaCosimPlugin(object):
             actor
             for actor in self.world.get_actors().filter(pattern)
             if actor.attributes.get("role_name") not in cosim_id_record
-            and actor.attributes.get("role_name") != "CAV"
+            and "CAV" not in actor.attributes.get("role_name")
         ]
 
         for actor in actors_to_destroy:
