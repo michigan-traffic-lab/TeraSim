@@ -69,23 +69,6 @@ TeraSim offers multimodal examples:
 
 5. Construction zone simulation: `python3 construction_example.py`
 
-## Troubleshooting
-
-- **SUMO GUI not displaying**
-    ```bash
-    libGL error: failed to load driver: swrast
-    X Error: code 2 major 152 minor 3: BadValue (integer parameter out of range for operation)
-    ```
-    You can resolve this issue by running the following command (for Anaconda users):
-    ```bash
-    conda install -c conda-forge libstdcxx-ng
-    ```
-- **Redis server creation error**
-    ``` 
-    "_Could not create server TCP listening socket *:6379: bind: Address already in use_",
-    ```
-    That means the Redis server is already running, and you can proceed without further action.
-
 ## Developer
 
 Zhijie Qiao zhijieq@umich.edu
