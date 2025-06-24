@@ -100,6 +100,7 @@ def send_user_av_control_wrapper(
     gear_cmd: int = 0,
     remote_flag: bool = False,
     user_msg: str = "user",
+    redis_key: str = VEHICLE_CONTROL
 ):
     """
     Description: Send the control command to the control AV.
@@ -139,14 +140,14 @@ def send_user_av_control_wrapper(
 
     # Configure redis key-and data type
     redis_client = create_redis_client(
-        key_value_config={VEHICLE_CONTROL: VehicleControl},
+        key_value_config={redis_key: VehicleControl},
         remote_flag=remote_flag,
-        pub_channels=[VEHICLE_CONTROL],
+        pub_channels=[redis_key],
         sub_channels=[],
         latency_src_channels=[],
     )
 
-    redis_client.set(VEHICLE_CONTROL, vehicle_control)
+    redis_client.set(redis_key, vehicle_control)
 
 
 def send_user_av_planning_wrapper(
@@ -156,6 +157,7 @@ def send_user_av_planning_wrapper(
     orientation_list: list = [],
     remote_flag: bool = False,
     user_msg: str = "user",
+    redis_key: str = VEHICLE_PLANNING
 ):
     """
     Description: Send the vehicle planning trajectory to the control AV.
@@ -187,11 +189,11 @@ def send_user_av_planning_wrapper(
 
     # Configure redis key-and data type
     redis_client = create_redis_client(
-        key_value_config={VEHICLE_PLANNING: VehiclePlanning},
+        key_value_config={redis_key: VehiclePlanning},
         remote_flag=remote_flag,
-        pub_channels=[VEHICLE_PLANNING],
+        pub_channels=[redis_key],
         sub_channels=[],
         latency_src_channels=[],
     )
 
-    redis_client.set(VEHICLE_PLANNING, vehicle_planning)
+    redis_client.set(redis_key, vehicle_planning)
