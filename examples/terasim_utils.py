@@ -163,17 +163,16 @@ def send_user_av_planning_wrapper(
     Description: Send the vehicle planning trajectory to the control AV.
     """
 
-    x_list_center_utm = []
-    y_list_center_utm = []
+    x_list_center = []
+    y_list_center = []
     orientation_list_nef = []
 
     for i in range(len(x_list)):
         orientation = sumo_heading_to_orientation(orientation_list[i])
         x, y = front_coordinate_to_center_coordinate(x_list[i], y_list[i], orientation)
-        x, y = sumo_to_utm_coordinate(x, y)
 
-        x_list_center_utm.append(x)
-        y_list_center_utm.append(y)
+        x_list_center.append(x)
+        y_list_center.append(y)
         orientation_list_nef.append(orientation)
 
     vehicle_planning = VehiclePlanning()
@@ -182,8 +181,8 @@ def send_user_av_planning_wrapper(
     vehicle_planning.header.information = user_msg
     vehicle_planning.time_resolution = 0.1
     vehicle_planning.go = 1
-    vehicle_planning.x_list = x_list_center_utm
-    vehicle_planning.y_list = y_list_center_utm
+    vehicle_planning.x_list = x_list_center
+    vehicle_planning.y_list = y_list_center
     vehicle_planning.speed_list = speed_list
     vehicle_planning.orientation_list = orientation_list_nef
 
