@@ -42,6 +42,8 @@ class Actor(BaseModel):
     speed_long: float = 0.0
     ## lateral speed of the vehicle (meters per second)
     speed_lat: float = 0.0
+    ## speed limit of the road
+    speed_limit: float = 0.0
 
     # additional information of the vehicle
     direction_x: float = 0.0
