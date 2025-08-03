@@ -25,7 +25,7 @@ env = TeraSimEnvForUser(
 # Create the simulator
 sim = Simulator(
     sumo_net_file_path=maps_path / "mcity.net.xml",
-    sumo_config_file_path=maps_path / "mcity_bike_example.sumocfg",
+    sumo_config_file_path=maps_path / "mcity_pedestrian_example.sumocfg",
     num_tries=10,
     gui_flag=True,
     realtime_flag=True,
@@ -35,14 +35,9 @@ sim = Simulator(
 # Vehicle Co-simulation
 sim.add_plugin(
     TeraSimCoSimPlugin(
-        remote_flag=False,  # connect to mcityos, disable for local testing
         control_cav=False,  # allow outside source to synchronize av state, like CARLA
         control_tls=True,  # TeraSim controlled traffic lights
         keepRoute=1,  # Map cav to the closest edge
-        CAVSpeedOverride=True,  # Allow speed override for CAV in Terasim
-        pub_channels=[],  # Publish channels (mcityos remote only)
-        sub_channels=[],  # Subscribe channels (mcityos remote only)
-        latency_src_channels=[],  # Latency source channels (mcityos remote only)
     )
 )
 

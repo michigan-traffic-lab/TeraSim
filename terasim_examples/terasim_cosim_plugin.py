@@ -27,7 +27,6 @@ class TeraSimCoSimPlugin:
         control_cav=False,
         control_tls=True,
         keepRoute=1,
-        CAVSpeedOverride=False,
         pub_channels=[],
         sub_channels=[],
         latency_src_channels=[],
@@ -41,7 +40,6 @@ class TeraSimCoSimPlugin:
         self.control_cav = control_cav
         self.control_tls = control_tls
         self.keepRoute = keepRoute
-        self.CAVSpeedOverride = CAVSpeedOverride
 
         self.pub_channels = pub_channels
         self.sub_channels = sub_channels
@@ -220,9 +218,8 @@ class TeraSimCoSimPlugin:
                 traci.vehicle.moveToXY(
                     "CAV", "", 0, x, y, angle=orientation, keepRoute=self.keepRoute
                 )
-                if self.CAVSpeedOverride:
-                    traci.vehicle.setSpeedMode("CAV", 0)
-                    traci.vehicle.setSpeed("CAV", speed_long)
+                traci.vehicle.setSpeedMode("CAV", 0)
+                traci.vehicle.setSpeed("CAV", speed_long)
 
     def sync_terasim_actor_to_cosim(self):
         """sync sumo controlled actor to cosim"""
