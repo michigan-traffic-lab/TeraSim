@@ -2,15 +2,17 @@
 
 ## Introduction
 
-**TeraSim** is a state-of-the-art traffic simulation environment meticulously designed for the precise evaluation of autonomous vehicle (AV) safety performance. Building upon the robust foundation of [**SUMO**](https://eclipse.dev/sumo/), TeraSim significantly enhances simulation fidelity with advanced traffic behavior modeling and high-precision maneuver execution capabilities.
+**TeraSim** is a state-of-the-art traffic simulation environment meticulously designed for the precise evaluation of autonomous vehicle (AV) safety performance. Building upon the robust foundation of SUMO, TeraSim significantly enhances simulation fidelity with advanced traffic behavior modeling and high-precision maneuver execution capabilities.
 
-A key feature of TeraSim is its co-simulation functionality, which enables seamless integration with open-source industry-standard tools such as [**CARLA**](https://carla.org/) and [**Autoware**](https://autoware.org/), facilitating comprehensive testing that combines TeraSim's advanced traffic modeling with high-fidelity sensor simulation and accurate vehicle dynamics.
+A key feature of TeraSim is its co-simulation functionality, which enables seamless integration with open-source industry-standard tools such as [**CARLA**](carla.md) and [**Autoware**](autoware.md), facilitating comprehensive testing that combines TeraSim's advanced traffic modeling with high-fidelity sensor simulation and accurate vehicle dynamics.
+
+![Alt Text](figure/terasim.png)
 
 ## Installation
 
 ### Base Requirements
 
-- __Hardware__: A CPU based on Intel x86 architecture with at least 16 cores and 8 GB of system memory.
+- __Hardware__: A CPU based on Intel x86 architecture with at least 12 cores and 8 GB of system memory.
 
 - __System__: Ubuntu 22.04 (native system installation rather than a virtual machine or Windows Subsystem for Linux).
 
@@ -73,7 +75,7 @@ To run a fulll stack closed-loop simulation including TeraSim, Autoware, and CAR
 
 ## Developer
 
-Zhijie Qiao zhijieq@umich.edu
+Zhijie Qiao: zhijieq@umich.edu
 
 Haowei Sun: haoweis@umich.edu
 
