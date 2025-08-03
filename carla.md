@@ -17,24 +17,28 @@ This guide explains how to connect a CARLA controlled CAV to traffic actors incl
 Start a CARLA server:
 
 ```bash
+# Terminal 1
 ./CarlaUE4.sh
 ```
 
 Load the Mcity Digital Twin Map:
 ```bash
+# Terminal 2
 python3 load_mcity_digital_twin.py
 ```
 
 Start a manually controlled CAV in CARLA:
 
 ```bash
+# Terminal 3
 cd carla_examples
-python3 carla_cav_simple.py
+python3 carla_av_simple.py
 ```
 
-Run the CARLA co-simulation scrip. This synchronizes background vehicles and traffic light states from TeraSim to CARLA, and synchronizes CAV information from CARLA back to TeraSim.
+Run the CARLA co-simulation script. This synchronizes background vehicles and traffic light states from TeraSim to CARLA, and synchronizes CAV information from CARLA back to TeraSim.
 
 ```bash
+# Terminal 4
 cd carla_examples
 python3 carla_cosim_simple.py
 ```
@@ -42,6 +46,8 @@ python3 carla_cosim_simple.py
 Run the TeraSim scripts by selecting one of the following options:
 
 ```bash
+# Terminal 5
+
 # 1.Naturalistic and Adversarial Driving Simulation (https://www.nature.com/articles/s41467-021-21007-8)
 python3 safetest_nade_example.py
 

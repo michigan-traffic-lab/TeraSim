@@ -15,17 +15,21 @@ This guide explains how to connect Autoware's simple planning simulator to traff
 Run the autoware co-simulation auxiliary scripts. This synchronizes background vehicles and traffic light states from TeraSim to Autoware, and synchronizes CAV information from Autoware back to TeraSim.
 
 ```bash
+# Terminal 1
 ros2 launch autoware_cosim sim.launch.py
 ```
 
 Start the autoware simulation stack. Use 2D Pose Estimate to initialize the vehicle and 2D Goal pose to select a destination for path planning:
 
 ```bash
+# Terminal 2
 ros2 launch autoware_launch planning_simulator.launch.xml map_path:=$HOME/autoware/map vehicle_model:=sample_vehicle sensor_model:=sample_sensor_kit lanelet2_map_file:=lanelet2_mcity_v43.osm
 ```
 
 Run the TeraSim scripts by selecting one of the following options:
 ```bash
+# Terminal 3
+
 # 1.Naturalistic and Adversarial Driving Simulation (https://www.nature.com/articles/s41467-021-21007-8)
 python3 safetest_nade_example.py
 

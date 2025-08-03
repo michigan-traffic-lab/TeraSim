@@ -94,11 +94,11 @@ def create_construction_zone_blueprint(world):
 
 
 def isVehicle(actorID):
-    return "BV" in actorID or "CAV" in actorID or "POV" in actorID or "VUT" in actorID
+    return "BV" in actorID or "CAV" in actorID
 
 
 def isPedestrian(actorID):
-    return "VRU" in actorID
+    return "VRU" in actorID or "PED" in actorID
 
 
 def spawn_actor(client, blueprint, transform):

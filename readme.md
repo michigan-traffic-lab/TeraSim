@@ -10,7 +10,7 @@ A key feature of TeraSim is its co-simulation functionality, which enables seaml
 
 ### Requirements
 
-- __Hardware__: A CPU based on Intel x86 architecture with at least 16 cores, at least 8 GB of system memory.
+- __Hardware__: A CPU based on Intel x86 architecture with at least 16 cores and 8 GB of system memory.
 
 - __System__: Ubuntu 22.04 (native system installation rather than a virtual machine or Windows Subsystem for Linux).
 
@@ -62,9 +62,14 @@ python3 cyclist_example.py
 python3 construction_example.py
 ```
 
-## Next Steps
+## TeraSim Co-Simulation
 
-To run TeraSim examples with Autoware, see [autoware.md](autoware.md).
+To run TeraSim co-simulation with Autoware, see [autoware.md](autoware.md).
+
+To run TeraSim co-simulation with CARLA, see [carla.md](carla.md).
+
+To run a fulll stack closed-loop simulation including TeraSim, Autoware, and CARLA, see [fullstack.md](fullstack.md).
+
 
 ## Developer
 
