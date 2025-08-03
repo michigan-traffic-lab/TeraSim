@@ -50,7 +50,7 @@ sim = Simulator(
 sim.add_plugin(
     TeraSimCoSimPlugin(
         control_tls=True,  # allow outside source to synchronize av state, like CARLA
-        keepRoute=1,  # Map cav to the closest edge
+        keepRoute=2,
         closed_lane_ids=["EG_1_3_1.61_2"],
         closed_lane_pos=["right"],
         closed_lane_shapes=[]

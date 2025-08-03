@@ -1,9 +1,4 @@
-<!-- PROJECT LOGO -->
-<p align="center">
-  <h2 align="center">TeraSim</h2>
-  <p align="center">
-  </p>
-</p>
+# TeraSim
 
 ## Introduction
 

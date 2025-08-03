@@ -3,7 +3,7 @@ import time
 import copy
 import numpy as np
 
-from terasim_utils import *
+from utils import *
 
 from terasim.overlay import traci
 from terasim.simulator import Simulator

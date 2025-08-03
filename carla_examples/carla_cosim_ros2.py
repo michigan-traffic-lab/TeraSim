@@ -12,14 +12,13 @@ from terasim_cosim.redis_msgs import (
     SUMOSignalDict,
     VehicleState,
 )
-from carl_utils import *
+from utils import *
 
 
 class CarlaCosimPlugin(object):
     def __init__(
         self,
         cosim_controlled_actor_keys=[TERASIM_ACTOR_INFO],
-        control_cav=True,
     ):
         self.client = carla.Client("127.0.0.1", 2000)
         self.client.set_timeout(2.0)
@@ -31,7 +30,6 @@ class CarlaCosimPlugin(object):
             traffic_light.set_state(carla.TrafficLightState.Off)
             traffic_light.freeze(True)
 
-        self.control_cav = control_cav
         self.cosim_controlled_actor_keys = cosim_controlled_actor_keys
 
         self.vehicle_blueprints = create_vehicle_blueprint(self.world)
@@ -51,128 +49,10 @@ class CarlaCosimPlugin(object):
         self.sync_cosim_construction_zone_to_carla()
 
     def tick(self):
-        if self.control_cav:
-            self.sync_carla_cav_to_cosim()
-        else:
-            self.sync_cosim_cav_to_carla()
-
         self.sync_cosim_actor_to_carla()
         self.sync_cosim_tls_to_carla()
 
         self.world.tick()
-
-    def sync_carla_cav_to_cosim(self):
-        vehicle_status, carla_id = get_actor_id_from_attribute(self.world, "CAV")
-
-        if not vehicle_status:
-            print("CAV not found in Carla simulation. Exiting...")
-            return
-
-        CAV = self.world.get_actor(carla_id)
-        transform = CAV.get_transform()
-        draw_text(self.world, transform.location + carla.Location(z=2.5), "CAV")
-        # draw_point(
-        #     self.world,
-        #     size=0.05,
-        #     color=(255, 0, 0),
-        #     location=transform.location + carla.Location(z=2.5),
-        #     life_time=0,
-        # )
-
-        velocity = CAV.get_velocity()
-        speed = (velocity.x**2 + velocity.y**2 + velocity.z**2) ** 0.5
-
-        cav_info = ActorDict()
-        cav_info.header.timestamp = time.time()
-
-        x = transform.location.x
-        y = transform.location.y
-
-        utm_x, utm_y = carla_to_utm(x, y)
-        height = get_z_offset(
-            world=self.world,
-            start_location=carla.Location(
-                transform.location.x, transform.location.y, 300
-            ),
-            end_location=carla.Location(
-                transform.location.x, transform.location.y, 200
-            ),
-        )
-
-        cav_info.data["CAV"] = Actor(
-            x=utm_x,
-            y=utm_y,
-            z=height,
-            length=5.0,
-            width=1.8,
-            height=1.8,
-            orientation=math.radians(-transform.rotation.yaw),
-            speed_long=speed,
-        )
-        self.redis_client.set(CAV_INFO, cav_info)
-
-        vehicle_state = VehicleState()
-        vehicle_state.header.timestamp = time.time()
-
-        control = CAV.get_control()
-        vehicle_state.brake_cmd = control.brake
-        vehicle_state.throttle_cmd = control.throttle
-        vehicle_state.steer_cmd = control.steer
-        vehicle_state.gear_pos = 4
-
-        self.redis_client.set(VEHICLE_STATE, vehicle_state)
-
-    def sync_cosim_cav_to_carla(self):
-        try:
-            cav_info = self.redis_client.get(CAV_INFO)
-        except:
-            print("cav_info not available. Exiting...")
-            return
-
-        if cav_info:
-            cav_info = cav_info.data["CAV"]
-
-            x, y = utm_to_carla(cav_info.x, cav_info.y)
-            start_location = carla.Location(x, y, 300)
-            end_location = carla.Location(x, y, 200)
-            yaw = -math.degrees(cav_info.orientation)
-
-            vehicle_status, carla_id = get_actor_id_from_attribute(self.world, "CAV")
-
-            if not vehicle_status:
-                blueprint_library = self.world.get_blueprint_library()
-                blueprint = blueprint_library.find("vehicle.lincoln.mkz_2020")
-                blueprint.set_attribute("color", "255, 0, 0")
-                blueprint.set_attribute("role_name", "CAV")
-                z = get_z_offset(self.world, start_location, end_location)
-                transform = carla.Transform(
-                    carla.Location(x=x, y=y, z=z + 0.5), carla.Rotation(yaw=yaw)
-                )
-                carla_id = spawn_actor(self.client, blueprint, transform)
-                print("Spawned CAV in CARLA simulation")
-            else:
-                CAV = self.world.get_actor(carla_id)
-                current_transform = CAV.get_transform()
-                z = get_z_offset(
-                    self.world,
-                    start_location,
-                    end_location,
-                    current_transform.location.z,
-                )
-                transform = carla.Transform(
-                    carla.Location(x=x, y=y, z=z), carla.Rotation(yaw=yaw)
-                )
-                CAV.set_transform(transform)
-                # draw_text(
-                #    self.world, transform.location + carla.Location(z=2.5), "MCITY-CAV"
-                # )
-                # draw_point(
-                #     self.world,
-                #     size=0.05,
-                #     color=(255, 0, 0),
-                #     location=transform.location + carla.Location(z=2.5),
-                #     life_time=0,
-                # )
 
     def sync_cosim_tls_to_carla(self):
         try:
@@ -398,7 +278,7 @@ class CarlaCosimPlugin(object):
 
 def main():
     carla_cosim_plugin = CarlaCosimPlugin()
-    step_length = 0.1
+    step_length = 0.02
 
     settings = carla_cosim_plugin.world.get_settings()
     settings.fixed_delta_seconds = step_length

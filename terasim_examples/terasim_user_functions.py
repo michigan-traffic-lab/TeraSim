@@ -1,5 +1,4 @@
-from terasim_utils import (
-    send_user_av_control_wrapper,
+from utils import (
     send_user_av_planning_wrapper,
 )
 
@@ -73,32 +72,6 @@ def get_tls_info(traci):
         tls_info[tl_id] = tls_state
 
     return tls_info
-
-
-def send_av_control(vehicle_info):
-    """
-    Description: Send low-level control commands to control the AV.
-    """
-
-    brake_cmd = 0.2  # [0.0, 1.0]0
-    throttle_cmd = 0.0  # [0.0, 1.0]
-    steering_cmd = 0.0  # [-1.0, 1.0] for CARLA, [-2.5pi, 2.5pi] for real AV
-
-    # PARK       =1
-    # REVERSE    =2
-    # NEUTRAL    =3
-    # DRIVE      =4
-    gear_cmd = 1
-
-    user_msg = "your message"
-
-    send_user_av_control_wrapper(
-        brake_cmd,
-        throttle_cmd,
-        steering_cmd,
-        gear_cmd,
-        user_msg=user_msg,
-    )
 
 
 def send_av_planning(vehicle_info):

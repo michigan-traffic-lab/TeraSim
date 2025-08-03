@@ -12,7 +12,7 @@ from terasim.vehicle.factories.vehicle_factory import VehicleFactory
 from terasim.vehicle.sensors.ego import EgoSensor
 from terasim.vehicle.vehicle import Vehicle
 
-from terasim_utils import *
+from utils import *
 from terasim_cosim.redis_msgs import Actor, ActorDict
 
 

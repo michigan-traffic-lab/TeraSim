@@ -3,7 +3,7 @@ import time
 
 from terasim_cosim.constants import *
 from terasim_cosim.redis_client_wrapper import create_redis_client
-from terasim_cosim.redis_msgs import VehiclePlanning, VehicleControl
+from terasim_cosim.redis_msgs import VehiclePlanning
 
 
 UTM_OFFSET = [-277600 + 102.89, -4686800 + 281.25, 0.0]
@@ -91,63 +91,6 @@ def quaternion_from_euler(roll, pitch, yaw):
     ) * math.sin(pitch / 2) * math.sin(yaw / 2)
 
     return [qx, qy, qz, qw]
-
-
-def send_user_av_control_wrapper(
-    brake_cmd: float = 0.0,
-    throttle_cmd: float = 0.0,
-    steering_cmd: float = 0.0,
-    gear_cmd: int = 0,
-    remote_flag: bool = False,
-    user_msg: str = "user",
-    redis_key: str = VEHICLE_CONTROL
-):
-    """
-    Description: Send the control command to the control AV.
-    """
-
-    if brake_cmd < 0.0 or brake_cmd > 1.0:
-        raise ValueError("The brake_cmd should be in the range of [0.0, 1.0].")
-    if throttle_cmd < 0.0 or throttle_cmd > 1.0:
-        raise ValueError("The throttle_cmd should be in the range of [0.0, 1.0].")
-    if steering_cmd < -1.0 or steering_cmd > 1.0:
-        raise ValueError("The steering_cmd should be in the range of [-1.0, 1.0].")
-    if gear_cmd < 0 or gear_cmd > 4:
-        raise ValueError("The gear_cmd should be in the range of [0, 4].")
-    if throttle_cmd > 0.0 and brake_cmd > 0.0:
-        raise ValueError(
-            "The throttle_cmd and brake_cmd cannot be both greater than 0."
-        )
-
-    if gear_cmd == 1:
-        brake_cmd = 0.5
-        throttle_cmd = 0.0
-        steering_cmd = 0.0
-
-    if gear_cmd == 3:
-        brake_cmd = 0.5
-        throttle_cmd = 0.0
-        steering_cmd = 0.0
-
-    vehicle_control = VehicleControl()
-
-    vehicle_control.header.timestamp = time.time()
-    vehicle_control.header.information = user_msg
-    vehicle_control.brake_cmd = brake_cmd
-    vehicle_control.throttle_cmd = throttle_cmd
-    vehicle_control.steering_cmd = steering_cmd
-    vehicle_control.gear_cmd = gear_cmd
-
-    # Configure redis key-and data type
-    redis_client = create_redis_client(
-        key_value_config={redis_key: VehicleControl},
-        remote_flag=remote_flag,
-        pub_channels=[redis_key],
-        sub_channels=[],
-        latency_src_channels=[],
-    )
-
-    redis_client.set(redis_key, vehicle_control)
 
 
 def send_user_av_planning_wrapper(
