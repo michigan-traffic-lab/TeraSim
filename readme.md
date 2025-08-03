@@ -8,7 +8,7 @@ A key feature of TeraSim is its co-simulation functionality, which enables seaml
 
 ## Installation
 
-### Requirements
+### Base Requirements
 
 - __Hardware__: A CPU based on Intel x86 architecture with at least 16 cores and 8 GB of system memory.
 

@@ -4,15 +4,18 @@ This guide explains how to connect a CARLA controlled CAV to traffic actors incl
 
 ### Additional Requirements
 
-- __Hardware__: A CPU based on Intel x86 architecture with at least 16 cores, at least 16 GB of system memory, and a dedicated GPU with at least 8 GB of VRAM.
+- __Hardware__: A CPU based on Intel x86 architecture with at least 16 cores, 16 GB of system memory, and a dedicated GPU with at least 8 GB of VRAM.
 
 ### Additional Dependency
 
-- [__CARLA__](https://github.com/carla-simulator/carla/releases): Download the Ubuntu version of CARLA_0.9.14.tar.gz. Follow the [official instructions](https://carla.readthedocs.io/en/latest/start_quickstart/#running-carla) to make sure you can run simple server and client tests.
+- [__CARLA__](https://github.com/carla-simulator/carla/releases): Download the Ubuntu version of CARLA_0.9.14.tar.gz. Follow the [official instructions](https://carla.readthedocs.io/en/latest/start_quickstart/#running-carla) to make sure you can run simple server and client experiments.
 
 - [__Mcity Digital Twin__](https://github.com/mcity/mcity-digital-twin): Follow the installation instructions to configure _Packaged Version of CARLA_. Make sure you can successfully load the Mcity Ditigal Twin in the CARLA server.
 
 ## Run CARLA Co-Simulation
+
+[![Alt Text](figure/carla_cosim.png)](https://drive.google.com/file/d/1LJ7LuDEx4cIMGZPfYVdRs1jOGqq8vOec/view?usp=drive_link)
+
 
 Start a CARLA server:
 
@@ -27,7 +30,7 @@ Load the Mcity Digital Twin Map:
 python3 load_mcity_digital_twin.py
 ```
 
-Start a manually controlled CAV in CARLA:
+Create a CAV in CARLA. Use the keyboard arrow keys (Up, Down, Left, Right) to manually control the vehicle through the CARLA pygame window interface.
 
 ```bash
 # Terminal 3
@@ -43,23 +46,8 @@ cd carla_examples
 python3 carla_cosim_simple.py
 ```
 
-Run the TeraSim scripts by selecting one of the following options:
-
+Run the TeraSim script:
 ```bash
 # Terminal 5
-
-# 1.Naturalistic and Adversarial Driving Simulation (https://www.nature.com/articles/s41467-021-21007-8)
-python3 safetest_nade_example.py
-
-# 2.SUMO controlled vehicle simulation 
 python3 default_sumo_example.py
-
-# 3.SUMO controlled pedestrian simulation 
-python3 pedestrian_example.py
-
-# 4.SUMO controlled bicycle and motorcycle simulation 
-python3 cyclist_example.py
-
-# 5.Contruction zone simulation with blocked road segment
-python3 construction_example.py
 ```
