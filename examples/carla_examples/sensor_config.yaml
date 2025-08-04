@@ -1,0 +1,43 @@
+sensors:
+  - type: "LiDAR"
+    transform:
+      location: {x: 0.0, y: 0.0, z: 2.4}
+      rotation: {roll: 0.0, pitch: 0.0, yaw: 0.0}
+    options:
+      channels: "64"
+      range: "40"
+      points_per_second: "480000"
+      rotation_frequency: "25"
+      upper_fov: "0.0"
+      lower_fov: "-23.8"
+      dropoff_general_rate: "0.0"
+      noise_stddev: "0.0"
+      horizontal_fov: "360.0"
+    topic: "/carla/lidar/pointcloud"
+
+  - type: "RGBCamera"
+    transform:
+      location: {x: 0.5, y: 0.2, z: 1.4}
+      rotation: {roll: 0.0, pitch: 0.0, yaw: 0.0}
+    options:
+      image_size_x: "1920"
+      image_size_y: "1080"
+    topic: "/carla/camera/image_color"
+
+  - type: "SegCamera"
+    transform:
+      location: {x: 0.5, y: 0.2, z: 1.4}
+      rotation: {roll: 0.0, pitch: 0.0, yaw: 0.0}
+    options:
+      image_size_x: "1920"
+      image_size_y: "1080"
+    topic: "/carla/camera/image_segmentation"
+
+  - type: "DepthCamera"
+    transform:
+      location: {x: 0.5, y: 0.2, z: 1.4}
+      rotation: {roll: 0.0, pitch: 0.0, yaw: 0.0}
+    options:
+      image_size_x: "1920"
+      image_size_y: "1080"
+    topic: "/carla/camera/image_depth"

@@ -22,9 +22,10 @@ from pcdet.models import build_network, load_data_to_gpu
 from pcdet.utils import common_utils
 from pcdet.datasets.dataset import DatasetTemplate
 
+
 CONFIDENCE_THRESHOLD = 0.75
-CFG_PATH = "/home/zhijie/terasim/Mcity-2.0-API-for-AV-motion-planning/examples/lidar_perception/voxel_rcnn_car.yaml"
-MODEL_PATH = "/home/zhijie/terasim/Mcity-2.0-API-for-AV-motion-planning/examples/lidar_perception/voxel_rcnn_car_84.54.pth"
+CFG_PATH = "voxel_rcnn_car.yaml"
+MODEL_PATH = "voxel_rcnn_car_84.54.pth"
 
 
 class DummyDataset(DatasetTemplate):
