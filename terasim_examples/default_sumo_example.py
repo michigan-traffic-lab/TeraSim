@@ -37,7 +37,7 @@ sim.add_plugin(
     TeraSimCoSimPlugin(
         control_cav=False,  # allow outside source to synchronize av state, like CARLA
         control_tls=True,  # TeraSim controlled traffic lights
-        keepRoute=2,  # Map cav to the closest edge
+        keepRoute=1,  # Map cav to the closest edge
     )
 )
 

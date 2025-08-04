@@ -1,8 +1,10 @@
 # Closed-Loop Co-Simulation
 
-This guide explains how to run a fulll stack closed-loop simulation including TeraSim, Autoware, and CARLA, fully capturing the fidelity and benefits of real-world vehicle testing.
+This guide explains how to run a fulll stack closed-loop simulation including TeraSim, Autoware, and CARLA, capturing the fidelity and benefits of real-world vehicle testing.
 
 We strongly encourage users to complete the [Autoware co-simulation](autoware.md) and [CARLA co-simulation](carla.md) sections to ensure all platforms are fully functional and to gain familiarity before proceeding to this section.
+
+![arch](figure/closed_loop.png)
 
 ### Additional Requirements
 
@@ -18,15 +20,15 @@ We strongly encourage users to complete the [Autoware co-simulation](autoware.md
 
 ## Run CARLA Co-Simulation
 
-This section describes how to perform closed-loop vehicle testing using the CARLA simulator integrated with the Autoware autonomous driving software stack. A high level system architecture diagram is shown below:
+This section describes how to perform closed-loop vehicle testing using the CARLA simulator integrated with the Autoware autonomous driving software stack.
 
-![arch](figure/closed-loop.png)
+[![arch](figure/full_stack.png)](https://drive.google.com/file/d/1u6OdS7pXT07o6_llDUbkK8WeDDXhVZkx/view?usp=drive_link)
 
 Upon successful execution of the scripts outlined above, two operational modes—Manual and Autonomous—will be available.
 
-Manual Mode: In Manual Mode, use the keyboard arrow keys (Up, Down, Left, Right) to manually control the vehicle through the CARLA pygame window interface. As you drive manually, the vehicle's location will be continuously updated and displayed in Autoware.
+**Manual Mode**: In Manual Mode, use the keyboard arrow keys (Up, Down, Left, Right) to manually control the vehicle through the CARLA pygame window interface. As you drive manually, the vehicle's location will be continuously updated and displayed in Autoware.
 
-Autonomous Mode: To switch to Autonomous Mode, press the keyboard key p. Once activated, the ego vehicle will automatically begin motion controlled by the Autoware stack. To return to Manual Mode, press p again.
+**Autonomous Mode**: To switch to Autonomous Mode, press the keyboard key p. Once activated, the ego vehicle will automatically begin motion controlled by the Autoware stack. To return to Manual Mode, press p again.
 
 Start a CARLA server:
 
@@ -41,7 +43,7 @@ Load the Mcity Digital Twin Map:
 python3 load_mcity_digital_twin.py
 ```
 
-Start a manually controlled CAV in CARLA:
+Start a manually controlled CAV in CARLA with ROS 2 sensor ouptut:
 
 ```bash
 # Terminal 3
@@ -49,7 +51,7 @@ cd carla_examples
 python3 carla_av_ros2.py
 ```
 
-Run the CARLA co-simulation script.
+Run the CARLA co-simulation script:
 
 ```bash
 # Terminal 4
@@ -57,51 +59,34 @@ cd carla_examples
 python3 carla_cosim_ros2.py
 ```
 
-Run the gnss sensor decoder to extract cav state information.
+Run the sensor decoder to extract cav state information:
 ```bash
 # Terminal 5
 ros2 run gnss_decoder gnss_decoder
 ```
 
 Run the autoware co-simulation auxiliary scripts for the real car.
-
 ```bash
 # Terminal 6
 ros2 launch autoware_cosim realcar.launch.py
 ```
 
-Start the Autoware real-car software stack. You should see the state of CARLA’s autonomous vehicle reflected in the Autoware RViz interface. You can now use the “2D Goal Pose” tool to set a destination and initiate planning.
+Start the Autoware real-car software stack. You should see the state of CARLA’s autonomous vehicle reflected in the Autoware RViz interface. You can now use the “2D Goal Pose” tool to set a destination and initiate planning. Alternatively, you can run a script to automate this process. Detailed instructions are provided in the Autoware repository.
 
 ```bash
 # Terminal 7
 ros2 launch autoware_launch autoware.launch.xml map_path:=$HOME/autoware/map vehicle_model:=sample_vehicle sensor_model:=sample_sensor_kit lanelet2_map_file:=lanelet2_mcity_v43.osm
 ```
 
-Run the preview controller, which receives planning inputs and generates control commands including steering, throttle, and brake, to drive the vehicle in CARLA.
+Run the preview controller, which receives planning inputs and generates control commands including steering, throttle, and brake to drive the vehicle in CARLA.
 
 ```bash
 # Terminal 8
 ros2 launch preview_control carla_control.launch.py
 ```
 
-
-Run the TeraSim scripts by selecting one of the following options:
-
+Run the TeraSim script:
 ```bash
 # Terminal 9
-
-# 1.Naturalistic and Adversarial Driving Simulation (https://www.nature.com/articles/s41467-021-21007-8)
-python3 safetest_nade_example.py
-
-# 2.SUMO controlled vehicle simulation 
 python3 default_sumo_example.py
-
-# 3.SUMO controlled pedestrian simulation 
-python3 pedestrian_example.py
-
-# 4.SUMO controlled bicycle and motorcycle simulation 
-python3 cyclist_example.py
-
-# 5.Contruction zone simulation with blocked road segment
-python3 construction_example.py
 ```

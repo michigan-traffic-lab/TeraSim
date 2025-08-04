@@ -308,8 +308,8 @@ class KeyboardControl(object):
             world.player.apply_control(self._control)
 
         else:
-            self._control.throttle = max(0.0, min(1.0, world.ros_interface.saved_control_msg.throttle_cmd * 1.6))
-            self._control.brake = max(0.0, min(1.0, world.ros_interface.saved_control_msg.brake_cmd * 0.8))
+            self._control.throttle = max(0.0, min(1.0, world.ros_interface.saved_control_msg.throttle_cmd * 1.8))
+            self._control.brake = max(0.0, min(1.0, world.ros_interface.saved_control_msg.brake_cmd * 0.7))
             self._control.steer = max(-1.0, min(1.0, -world.ros_interface.saved_control_msg.steering_cmd / 10.0))
 
             world.player.apply_control(self._control)
@@ -800,7 +800,7 @@ def game_loop(args):
         clock = pygame.time.Clock()
 
         while True:
-            clock.tick_busy_loop(50)
+            clock.tick_busy_loop(25)
             if controller.parse_events(world, clock):
                 return
             
@@ -828,8 +828,7 @@ def main():
     argparser.add_argument(
         "--res",
         metavar="WIDTHxHEIGHT",
-        default="1280x720",
-        help="window resolution (default: 1280x720)",
+        default="640x1020",
     )
     argparser.add_argument(
         "--gamma",

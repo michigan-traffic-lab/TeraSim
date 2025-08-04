@@ -70,7 +70,7 @@ To run TeraSim co-simulation with Autoware, see [autoware.md](autoware.md).
 
 To run TeraSim co-simulation with CARLA, see [carla.md](carla.md).
 
-To run a fulll stack closed-loop simulation including TeraSim, Autoware, and CARLA, see [fullstack.md](fullstack.md).
+To run a full-stack closed-loop simulation including TeraSim, Autoware, and CARLA, see [fullstack.md](fullstack.md).
 
 
 ## Developer
