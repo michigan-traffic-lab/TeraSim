@@ -2,13 +2,13 @@
 
 This guide explains how to run a fulll stack closed-loop simulation including TeraSim, Autoware, and CARLA, capturing the fidelity and benefits of real-world vehicle testing.
 
-We strongly encourage users to complete the [Autoware co-simulation](autoware.md) and [CARLA co-simulation](carla.md) sections to ensure all platforms are fully functional and to gain familiarity before proceeding to this section.
+We strongly encourage users to complete the [**Autoware co-simulation**](autoware.md) and [**CARLA co-simulation**](carla.md) sections to ensure all platforms are fully functional and to gain familiarity before proceeding to this section.
 
 ![arch](figure/closed_loop.png)
 
 ### Additional Requirements
 
-- __Hardware__: A CPU based on Intel x86 architecture with at least 24 cores, at least 24 GB of system memory, and a dedicated GPU with at least 12 GB of VRAM.
+- __Hardware__: A CPU based on Intel x86 architecture with at least 24 cores, at least 24 GB of system memory, and a dedicated GPU with at least 8 GB of VRAM.
 
 ### Additional Dependency
 

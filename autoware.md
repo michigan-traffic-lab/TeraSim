@@ -31,5 +31,6 @@ ros2 launch autoware_launch planning_simulator.launch.xml map_path:=$HOME/autowa
 Run the TeraSim script (construction zone is currently not supported in Autoware):
 ```bash
 # Terminal 3
+cd examples/terasim_examples
 python3 default_sumo_example.py
 ```

@@ -6,7 +6,7 @@
 
 A key feature of TeraSim is its co-simulation functionality, which enables seamless integration with open-source industry-standard tools such as [**CARLA**](carla.md) and [**Autoware**](autoware.md), facilitating comprehensive testing that combines TeraSim's advanced traffic modeling with high-fidelity sensor simulation and accurate vehicle dynamics.
 
-![Alt Text](figure/terasim.png)
+[![demo](figure/full_stack.png)](https://drive.google.com/file/d/1u6OdS7pXT07o6_llDUbkK8WeDDXhVZkx/view?usp=drive_link)
 
 ## Installation
 
@@ -42,7 +42,7 @@ redis-server
 
 To run TeraSim, navigate to the example directory:
 ```
-cd terasim_examples
+cd examples/terasim_examples
 ```
 
 TeraSim offers multimodal examples:
@@ -66,11 +66,11 @@ python3 construction_example.py
 
 ## TeraSim Co-Simulation
 
-To run TeraSim co-simulation with Autoware, see [autoware.md](autoware.md).
+Run TeraSim co-simulation with [**Autoware**](autoware.md).
 
-To run TeraSim co-simulation with CARLA, see [carla.md](carla.md).
+Run TeraSim co-simulation with [**CARLA**](carla.md).
 
-To run a full-stack closed-loop simulation including TeraSim, Autoware, and CARLA, see [fullstack.md](fullstack.md).
+Run Terasim, Autoware, and CARLA for a [**Full-Stack Closed-Loop Simulation**](fullstack.md).
 
 
 ## Developer

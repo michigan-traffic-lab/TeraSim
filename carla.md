@@ -34,7 +34,7 @@ Create a CAV in CARLA. Use the keyboard arrow keys (Up, Down, Left, Right) to ma
 
 ```bash
 # Terminal 3
-cd carla_examples
+cd examples/carla_examples
 python3 carla_av_simple.py
 ```
 
@@ -42,12 +42,13 @@ Run the CARLA co-simulation script. This synchronizes background vehicles and tr
 
 ```bash
 # Terminal 4
-cd carla_examples
+cd examples/carla_examples
 python3 carla_cosim_simple.py
 ```
 
 Run the TeraSim script:
 ```bash
 # Terminal 5
+cd examples/terasim_examples
 python3 default_sumo_example.py
 ```
