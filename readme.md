@@ -14,7 +14,7 @@ A key feature of TeraSim is its co-simulation functionality, which enables seaml
 
 - __Hardware__: A CPU based on Intel x86 architecture with at least 12 cores and 8 GB of system memory.
 
-- __System__: Ubuntu 22.04 (native system installation rather than a virtual machine or Windows Subsystem for Linux).
+- __System__: Ubuntu 22.04 (native system installation rather than a virtual machine or WSL).
 
 - __Python__: 3.10 (native to Ubuntu 22.04).
 
