@@ -52,3 +52,17 @@ Run the TeraSim script:
 cd examples/terasim_examples
 python3 default_sumo_example.py
 ```
+
+## Run CARLA Sensors
+
+Additionally, define your AV sensors in the `sensor_config.yaml` file and publish them as ROS topics!
+
+```bash
+# Launch the sensor node to publish all defined sensors
+python3 carla_sensor_ros2.py
+
+# Visualize the outputs from all sensors
+python3 carla_sensor_vis.py
+```
+
+[![Alt Text](figure/carla_sensor.gif)](https://drive.google.com/file/d/1LJ7LuDEx4cIMGZPfYVdRs1jOGqq8vOec/view?usp=drive_link)

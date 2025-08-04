@@ -20,8 +20,8 @@ sensors:
       location: {x: 0.5, y: 0.2, z: 1.4}
       rotation: {roll: 0.0, pitch: 0.0, yaw: 0.0}
     options:
-      image_size_x: "1920"
-      image_size_y: "1080"
+      image_size_x: "640"
+      image_size_y: "360"
     topic: "/carla/camera/image_color"
 
   - type: "SegCamera"
@@ -29,8 +29,8 @@ sensors:
       location: {x: 0.5, y: 0.2, z: 1.4}
       rotation: {roll: 0.0, pitch: 0.0, yaw: 0.0}
     options:
-      image_size_x: "1920"
-      image_size_y: "1080"
+      image_size_x: "640"
+      image_size_y: "360"
     topic: "/carla/camera/image_segmentation"
 
   - type: "DepthCamera"
@@ -38,6 +38,6 @@ sensors:
       location: {x: 0.5, y: 0.2, z: 1.4}
       rotation: {roll: 0.0, pitch: 0.0, yaw: 0.0}
     options:
-      image_size_x: "1920"
-      image_size_y: "1080"
+      image_size_x: "640"
+      image_size_y: "360"
     topic: "/carla/camera/image_depth"
