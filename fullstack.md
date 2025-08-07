@@ -14,7 +14,7 @@ We strongly encourage users to complete the [**Autoware co-simulation**](autowar
 
 - [__Autoware__](https://github.com/michigan-traffic-lab/autoware): Follow the installation instructions for the mcity-dedicated version of autoware until you can successfully run the provided short demonstration. This step may take 4-6 hours.
 
-- [__CARLA__](https://github.com/carla-simulator/carla/releases): Download the Ubuntu version of CARLA_0.9.14.tar.gz. Follow the [official instructions](https://carla.readthedocs.io/en/latest/start_quickstart/#running-carla) to make sure you can run simple server and client tests.
+- [__CARLA__](https://github.com/carla-simulator/carla/releases): Download the Ubuntu version of CARLA_0.9.15.tar.gz. Follow the [official instructions](https://carla.readthedocs.io/en/latest/start_quickstart/#running-carla) to make sure you can run simple server and client tests.
 
 - [__Mcity Digital Twin__](https://github.com/mcity/mcity-digital-twin): Follow the installation instructions to configure _Packaged Version of CARLA_. Make sure you can successfully load the Mcity Ditigal Twin in the CARLA server.
 
